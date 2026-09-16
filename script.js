@@ -6,22 +6,62 @@ const filtros = document.querySelectorAll('.filtros button');
 let cardAtual = null;
 let modalAbertoEm = null;
 
-/*
- * Observabilidade
- *
- * Se o Cloudflare Zaraz estiver disponível, envia o evento.
- * Caso contrário, não interfere no funcionamento do cardápio.
- */
+/* =========================================================
+   ANALYTICS
+   Os eventos são enviados para o próprio Worker.
+
+   O endpoint /api/analytics será criado no próximo passo.
+   ========================================================= */
+
 function track(evento, dados = {}) {
+  const payload = {
+    event: evento,
+    timestamp: new Date().toISOString(),
+    path: window.location.pathname,
+    ...dados
+  };
+
+  // Mantém o evento visível no console para facilitar os testes.
+  console.debug('[analytics]', payload);
+
   try {
-    if (window.zaraz && typeof window.zaraz.track === 'function') {
-      window.zaraz.track(evento, dados);
+    const body = JSON.stringify(payload);
+
+    /*
+     * sendBeacon é ideal para analytics porque não bloqueia
+     * a navegação e continua funcionando mesmo quando a página
+     * está sendo fechada.
+     */
+    if (navigator.sendBeacon) {
+      const blob = new Blob(
+        [body],
+        { type: 'application/json' }
+      );
+
+      navigator.sendBeacon('/api/analytics', blob);
+      return;
     }
 
-    // Útil durante os testes.
-    console.debug('[analytics]', evento, dados);
+    // Fallback para navegadores sem sendBeacon.
+    fetch('/api/analytics', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body,
+      keepalive: true
+    }).catch((erro) => {
+      console.warn(
+        '[analytics] Não foi possível enviar o evento:',
+        erro
+      );
+    });
+
   } catch (erro) {
-    console.warn('[analytics] Falha ao registrar evento:', erro);
+    console.warn(
+      '[analytics] Falha ao preparar o evento:',
+      erro
+    );
   }
 }
 
@@ -33,11 +73,12 @@ function track(evento, dados = {}) {
 function abrirModal(card) {
   const nome =
     card.dataset.nome ||
-    card.querySelector('h3')?.textContent.trim() ||
-    'Molho';
+    card.querySelector('h3')?.textContent?.trim() ||
+    '';
 
   const emoji =
-    card.querySelector('.card-emoji')?.textContent.trim() || '';
+    card.querySelector('.card-emoji')?.textContent?.trim() ||
+    '';
 
   const categoria = card.dataset.categoria || '';
   const preco = card.dataset.preco || '';
@@ -49,9 +90,10 @@ function abrirModal(card) {
     card.dataset.desc || '';
 
   document.getElementById('modal-ingredientes').textContent =
-    `🧂 Ingredientes: ${card.dataset.ingredientes || ''}`;
+    '🧂 Ingredientes: ' + (card.dataset.ingredientes || '');
 
-  document.getElementById('modal-preco').textContent = preco;
+  document.getElementById('modal-preco').textContent =
+    preco;
 
   cardAtual = card;
   modalAbertoEm = Date.now();
@@ -69,34 +111,44 @@ function abrirModal(card) {
 }
 
 
-function fecharModal(origem = 'button') {
+function fecharModal(origem = 'unknown') {
   if (!modal.classList.contains('aberto')) {
     return;
   }
 
-  const nome = cardAtual?.dataset.nome || '';
-  const categoria = cardAtual?.dataset.categoria || '';
+  let duracao = 0;
 
-  const tempoAberto = modalAbertoEm
-    ? Math.round((Date.now() - modalAbertoEm) / 1000)
-    : 0;
+  if (modalAbertoEm) {
+    duracao = Math.round(
+      (Date.now() - modalAbertoEm) / 1000
+    );
+  }
+
+  if (cardAtual) {
+    const nome =
+      cardAtual.dataset.nome ||
+      cardAtual.querySelector('h3')?.textContent?.trim() ||
+      '';
+
+    track('sauce_close', {
+      sauce: nome,
+      category: cardAtual.dataset.categoria || '',
+      duration_seconds: duracao,
+      close_method: origem
+    });
+  }
 
   modal.classList.remove('aberto');
   modal.setAttribute('aria-hidden', 'true');
 
-  track('sauce_close', {
-    sauce: nome,
-    category: categoria,
-    duration_seconds: tempoAberto,
-    close_method: origem
-  });
-
-  if (cardAtual) {
-    cardAtual.focus();
-  }
+  const cardAnterior = cardAtual;
 
   cardAtual = null;
   modalAbertoEm = null;
+
+  if (cardAnterior) {
+    cardAnterior.focus();
+  }
 }
 
 
@@ -104,28 +156,29 @@ function fecharModal(origem = 'button') {
    CARDS
    ========================================================= */
 
-cards.forEach(card => {
+cards.forEach((card) => {
 
   card.addEventListener('click', () => {
     abrirModal(card);
   });
 
-  /*
-   * Como os cards agora possuem tabindex="0" e role="button",
-   * Enter e Espaço também devem abri-los.
-   */
-  card.addEventListener('keydown', event => {
-    if (event.key === 'Enter' || event.key === ' ') {
+  card.addEventListener('keydown', (event) => {
+
+    if (
+      event.key === 'Enter' ||
+      event.key === ' '
+    ) {
       event.preventDefault();
       abrirModal(card);
     }
+
   });
 
 });
 
 
 /* =========================================================
-   FECHAMENTO DO MODAL
+   FECHAR MODAL
    ========================================================= */
 
 fechar.addEventListener('click', () => {
@@ -133,20 +186,24 @@ fechar.addEventListener('click', () => {
 });
 
 
-modal.addEventListener('click', event => {
+modal.addEventListener('click', (event) => {
+
   if (event.target === modal) {
     fecharModal('backdrop');
   }
+
 });
 
 
-document.addEventListener('keydown', event => {
+document.addEventListener('keydown', (event) => {
+
   if (
     event.key === 'Escape' &&
     modal.classList.contains('aberto')
   ) {
     fecharModal('escape');
   }
+
 });
 
 
@@ -154,16 +211,15 @@ document.addEventListener('keydown', event => {
    FILTROS
    ========================================================= */
 
-filtros.forEach(btn => {
+filtros.forEach((btn) => {
 
   btn.addEventListener('click', () => {
 
-    const ativo = document.querySelector(
-      '.filtros button.ativo'
-    );
+    const ativoAtual =
+      document.querySelector('.filtros button.ativo');
 
-    if (ativo) {
-      ativo.classList.remove('ativo');
+    if (ativoAtual) {
+      ativoAtual.classList.remove('ativo');
     }
 
     btn.classList.add('ativo');
@@ -172,13 +228,14 @@ filtros.forEach(btn => {
 
     let resultados = 0;
 
-    cards.forEach(card => {
+    cards.forEach((card) => {
 
       const visivel =
         filtro === 'todos' ||
         card.dataset.categoria === filtro;
 
-      card.style.display = visivel ? 'block' : 'none';
+      card.style.display =
+        visivel ? 'block' : 'none';
 
       if (visivel) {
         resultados++;
@@ -197,14 +254,14 @@ filtros.forEach(btn => {
 
 
 /* =========================================================
-   CARREGAMENTO DO CARDÁPIO
+   VISUALIZAÇÃO DO CARDÁPIO
    ========================================================= */
 
 window.addEventListener('load', () => {
 
   track('menu_view', {
     sauces: cards.length,
-    language: document.documentElement.lang || 'pt-BR'
+    language: navigator.language || ''
   });
 
 });
