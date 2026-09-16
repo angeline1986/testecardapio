@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cardápio de Molhos</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>🍶 Cardápio de Molhos</h1>
+    <p>Escolha o molho perfeito para o seu prato</p>
+  </header>
+
+  <nav class="filtros">
+    <button class="ativo" data-filtro="todos">Todos</button>
+    <button data-filtro="classico">Clássicos</button>
+    <button data-filtro="picante">Picantes</button>
+    <button data-filtro="cremoso">Cremosos</button>
+    <button data-filtro="vegano">Veganos</button>
+  </nav>
+
+  <main class="grid" id="grid">
+
+    <div class="card" data-categoria="classico"
+         data-desc="Clássico molho italiano com carne moída e tomate."
+         data-ingredientes="Carne moída, tomate, cebola, alho, vinho tinto, ervas."
+         data-preco="R$ 18,00">
+      <div class="card-emoji">🍝</div>
+      <div class="card-body">
+        <h3>Molho Bolonhesa</h3>
+        <p>Clássico molho italiano com carne moída e tomate.</p>
+        <div class="card-footer">
+          <span class="preco">R$ 18,00</span>
+          <span class="tag">Clássico</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-categoria="classico"
+         data-desc="Molho fresco de manjericão com azeite e parmesão."
+         data-ingredientes="Manjericão, azeite, pinhão, alho, parmesão."
+         data-preco="R$ 16,00">
+      <div class="card-emoji">🌿</div>
+      <div class="card-body">
+        <h3>Molho Pesto</h3>
+        <p>Molho fresco de manjericão com azeite e parmesão.</p>
+        <div class="card-footer">
+          <span class="preco">R$ 16,00</span>
+          <span class="tag">Clássico</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-categoria="classico"
+         data-desc="Molho de tomate rústico com ervas mediterrâneas."
+         data-ingredientes="Tomate, alho, orégano, azeite, manjericão."
+         data-preco="R$ 13,00">
+      <div class="card-emoji">⚓</div>
+      <div class="card-body">
+        <h3>Molho Marinara</h3>
+        <p>Molho de tomate rústico com ervas mediterrâneas.</p>
+        <div class="card-footer">
+          <span class="preco">R$ 13,00</span>
+          <span class="tag">Clássico</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-categoria="picante"
+         data-desc="Molho de tomate apimentado, típico da culinária romana."
+         data-ingredientes="Tomate, pimenta calabresa, alho, azeite."
+         data-preco="R$ 14,00">
+      <div class="card-emoji">🌶️</div>
+      <div class="card-body">
+        <h3>Molho Arrabbiata</h3>
+        <p>Molho de tomate apimentado, típico da culinária romana.</p>
+        <div class="card-footer">
+          <span class="preco">R$ 14,00</span>
+          <span class="tag">Picante</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-categoria="picante"
+         data-desc="Pasta picante do norte da África com pimentas defumadas."
+         data-ingredientes="Pimenta vermelha, cominho, coentro, alho, azeite."
+         data-preco="R$ 15,00">
+      <div class="card-emoji">🔥</div>
+      <div class="card-body">
+        <h3>Molho Harissa</h3>
+        <p>Pasta picante do norte da África com pimentas defumadas.</p>
+        <div class="card-footer">
+          <span class="preco">R$ 15,00</span>
+          <span class="tag">Picante</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-categoria="picante"
+         data-desc="Molho picante tailandês com pimenta e alho."
+         data-ingredientes="Pimenta jalapeño, alho, vinagre, açúcar, sal."
+         data-preco="R$ 11,00">
+      <div class="card-emoji">🌶</div>
+      <div class="card-body">
+        <h3>Molho Sriracha</h3>
+        <p>Molho picante tailandês com pimenta e alho.</p>
+        <div class="card-footer">
+          <span class="preco">R$ 11,00</span>
+          <span class="tag">Picante</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-categoria="cremoso"
+         data-desc="Cremoso molho à base de manteiga e parmesão."
+         data-ingredientes="Manteiga, creme de leite, parmesão, noz-moscada."
+         data-preco="R$ 20,00">
+      <div class="card-emoji">🧀</div>
+      <div class="card-body">
+        <h3>Molho Alfredo</h3>
+        <p>Cremoso molho à base de manteiga e parmesão.</p>
+        <div class="card-footer">
+          <span class="preco">R$ 20,00</span>
+          <span class="tag">Cremoso</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-categoria="cremoso"
+         data-desc="Molho cremoso com ovos, queijo e pancetta."
+         data-ingredientes="Ovos, pecorino, pancetta, pimenta-do-reino."
+         data-preco="R$ 22,00">
+      <div class="card-emoji">🥚</div>
+      <div class="card-body">
+        <h3>Molho Carbonara</h3>
+        <p>Molho cremoso com ovos, queijo e pancetta.</p>
+        <div class="card-footer">
+          <span class="preco">R$ 22,00</span>
+          <span class="tag">Cremoso</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-categoria="cremoso"
+         data-desc="Molho branco clássico da culinária francesa."
+         data-ingredientes="Manteiga, farinha, leite, noz-moscada, sal."
+         data-preco="R$ 16,00">
+      <div class="card-emoji">🥛</div>
+      <div class="card-body">
+        <h3>Molho Bechamel</h3>
+        <p>Molho branco clássico da culinária francesa.</p>
+        <div class="card-footer">
+          <span class="preco">R$ 16,00</span>
+          <span class="tag">Cremoso</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-categoria="vegano"
+         data-desc="Molho de tomate simples e aromático."
+         data-ingredientes="Tomate pelado, alho, azeite, manjericão, sal."
+         data-preco="R$ 12,00">
+      <div class="card-emoji">🍅</div>
+      <div class="card-body">
+        <h3>Molho Pomodoro</h3>
+        <p>Molho de tomate simples e aromático.</p>
+        <div class="card-footer">
+          <span class="preco">R$ 12,00</span>
+          <span class="tag">Vegano</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-categoria="vegano"
+         data-desc="Molho cremoso de gergelim, muito usado na culinária árabe."
+         data-ingredientes="Pasta de gergelim, limão, alho, azeite, sal."
+         data-preco="R$ 13,00">
+      <div class="card-emoji">🫙</div>
+      <div class="card-body">
+        <h3>Molho Tahine</h3>
+        <p>Molho cremoso de gergelim, muito usado na culinária árabe.</p>
+        <div class="card-footer">
+          <span class="preco">R$ 13,00</span>
+          <span class="tag">Vegano</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-categoria="vegano"
+         data-desc="Molho argentino fresco, ideal para carnes grelhadas."
+         data-ingredientes="Salsinha, orégano, alho, vinagre, azeite, pimenta."
+         data-preco="R$ 14,00">
+      <div class="card-emoji">🌱</div>
+      <div class="card-body">
+        <h3>Molho Chimichurri</h3>
+        <p>Molho argentino fresco, ideal para carnes grelhadas.</p>
+        <div class="card-footer">
+          <span class="preco">R$ 14,00</span>
+          <span class="tag">Vegano</span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Modal de detalhes -->
+  <div class="modal" id="modal">
+    <div class="modal-box">
+      <button class="fechar" id="fechar">&times;</button>
+      <h2 id="modal-nome"></h2>
+      <p id="modal-desc"></p>
+      <p id="modal-ingredientes"></p>
+      <span id="modal-preco"></span>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
