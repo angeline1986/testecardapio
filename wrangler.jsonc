@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "testecardapio",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-09-16",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+  "analytics_engine_datasets": [
+    {
+      "binding": "ANALYTICS",
+      "dataset": "cardapio_events"
+    }
+  ]
+}
