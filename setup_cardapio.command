@@ -202,4 +202,33 @@ fi
 echo
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "✓ Ambiente pronto para configurar o cardápio."
+
+if [ -x "./deploy.command" ]; then
+    echo
+    printf "Executar validação/publicação do cardápio agora? [s/N]: "
+    read -r EXECUTAR_DEPLOY
+
+    case "$EXECUTAR_DEPLOY" in
+        s|S|sim|SIM|Sim)
+            echo
+            ./deploy.command
+            DEPLOY_STATUS=$?
+
+            if [ "$DEPLOY_STATUS" -ne 0 ]; then
+                echo
+                echo "✗ O fluxo de deploy terminou com erro."
+                exit "$DEPLOY_STATUS"
+            fi
+            ;;
+        *)
+            echo
+            echo "Deploy não iniciado."
+            echo "Quando quiser publicar, execute: ./deploy.command"
+            ;;
+    esac
+else
+    echo
+    echo "○ deploy.command não encontrado ou não executável."
+    echo "  A configuração foi concluída, mas o deploy não foi iniciado."
+fi
 echo
