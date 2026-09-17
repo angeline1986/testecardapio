@@ -64,6 +64,35 @@ echo "Verificando projeto..."
 
 if [ ! -f "wrangler.jsonc" ]; then
     echo "○ Projeto ainda não configurado."
+    echo
+
+    while true; do
+        printf "Nome do projeto/Worker: "
+        read -r WORKER_NAME
+
+        if [ -z "$WORKER_NAME" ]; then
+            echo "✗ O nome não pode ficar vazio."
+            continue
+        fi
+
+        if ! printf '%s' "$WORKER_NAME" | grep -Eq '^[a-z0-9]+([a-z0-9-]*[a-z0-9])?$'; then
+            echo "✗ Use somente letras minúsculas, números e hífen."
+            echo "  Exemplo: cardapio-restaurante-x"
+            continue
+        fi
+
+        break
+    done
+
+    DATASET_NAME="$(printf '%s' "$WORKER_NAME" | tr '-' '_')_events"
+
+    echo
+    echo "Configuração proposta:"
+    echo
+    echo "  Worker:    $WORKER_NAME"
+    echo "  Analytics: $DATASET_NAME"
+    echo
+    echo "Nenhum arquivo foi alterado."
 else
     WORKER_NAME="$(
         node -e "
