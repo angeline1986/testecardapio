@@ -60,6 +60,33 @@ else
 fi
 
 echo
+echo "Verificando estrutura do template..."
+echo
+
+ESTRUTURA_ERROS=0
+
+if [ -d "public" ]; then
+    echo "✓ public/"
+else
+    echo "✗ public/ não encontrado"
+    ESTRUTURA_ERROS=$((ESTRUTURA_ERROS + 1))
+fi
+
+if [ -f "src/worker.js" ]; then
+    echo "✓ src/worker.js"
+else
+    echo "✗ src/worker.js não encontrado"
+    ESTRUTURA_ERROS=$((ESTRUTURA_ERROS + 1))
+fi
+
+if [ "$ESTRUTURA_ERROS" -ne 0 ]; then
+    echo
+    echo "❌ Estrutura do template incompleta: $ESTRUTURA_ERROS item(ns) ausente(s)."
+    echo "Nenhuma configuração foi criada ou alterada."
+    exit 1
+fi
+
+echo
 echo "Verificando projeto..."
 
 if [ ! -f "wrangler.jsonc" ]; then
