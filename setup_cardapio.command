@@ -92,7 +92,50 @@ if [ ! -f "wrangler.jsonc" ]; then
     echo "  Worker:    $WORKER_NAME"
     echo "  Analytics: $DATASET_NAME"
     echo
-    echo "Nenhum arquivo foi alterado."
+
+    printf "Criar wrangler.jsonc com essa configuração? [s/N]: "
+    read -r CONFIRMAR
+
+    case "$CONFIRMAR" in
+        s|S|sim|SIM|Sim)
+            COMPATIBILITY_DATE="$(date +%Y-%m-%d)"
+
+            if cat > wrangler.jsonc <<WRANGLER_EOF
+{
+  "\$schema": "node_modules/wrangler/config-schema.json",
+  "name": "$WORKER_NAME",
+  "main": "src/worker.js",
+  "compatibility_date": "$COMPATIBILITY_DATE",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+  "analytics_engine_datasets": [
+    {
+      "binding": "ANALYTICS",
+      "dataset": "$DATASET_NAME"
+    }
+  ]
+}
+WRANGLER_EOF
+            then
+                echo
+                echo "✓ wrangler.jsonc criado"
+                echo "✓ Worker: $WORKER_NAME"
+                echo "✓ Analytics: $DATASET_NAME"
+            else
+                echo
+                echo "✗ Falha ao criar wrangler.jsonc"
+                rm -f wrangler.jsonc
+                exit 1
+            fi
+            ;;
+        *)
+            echo
+            echo "○ Configuração cancelada."
+            echo "Nenhum arquivo foi alterado."
+            ;;
+    esac
 else
     WORKER_NAME="$(
         node -e "
