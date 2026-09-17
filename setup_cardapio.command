@@ -203,6 +203,47 @@ echo
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "✓ Ambiente pronto para configurar o cardápio."
 
+echo
+echo "Verificando senha administrativa..."
+
+SECRETS_JSON="$(npx wrangler secret list 2>/dev/null || true)"
+
+if printf '%s' "$SECRETS_JSON" | node -e 'let input="";process.stdin.on("data",c=>input+=c);process.stdin.on("end",()=>{try{const s=JSON.parse(input||"[]");process.exit(Array.isArray(s)&&s.some(i=>i&&i.name==="ADMIN_PASSWORD")?0:1)}catch(e){process.exit(2)}});'; then
+    echo "✓ ADMIN_PASSWORD já configurada"
+else
+    SECRET_STATUS=$?
+
+    if [ "$SECRET_STATUS" -eq 2 ]; then
+        echo "○ Não foi possível interpretar a lista de secrets."
+        echo "  A senha administrativa não será alterada."
+    else
+        echo "○ ADMIN_PASSWORD ainda não configurada"
+        printf "Configurar senha administrativa agora? [s/N]: "
+        read -r CONFIGURAR_ADMIN
+
+        case "$CONFIGURAR_ADMIN" in
+            s|S|sim|SIM|Sim)
+                echo
+                echo "O valor será solicitado diretamente pelo Wrangler."
+                echo "A senha não será gravada nos arquivos do projeto."
+                echo
+
+                if npx wrangler secret put ADMIN_PASSWORD; then
+                    echo "✓ ADMIN_PASSWORD configurada"
+                else
+                    echo "✗ Não foi possível configurar ADMIN_PASSWORD"
+                    echo "  O restante da configuração continuará sem alterar a senha."
+                fi
+                ;;
+            *)
+                echo "Senha administrativa não configurada."
+                echo "Você poderá configurá-la depois com:"
+                echo "  npx wrangler secret put ADMIN_PASSWORD"
+                ;;
+        esac
+    fi
+fi
+
 if [ -x "./deploy.command" ]; then
     echo
     printf "Executar validação/publicação do cardápio agora? [s/N]: "
