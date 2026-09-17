@@ -63,5 +63,33 @@ else
 fi
 
 echo
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "✓ Projeto pronto para publicação."
+echo "Dry-run aprovado. O projeto está pronto para publicação."
+echo
+printf "Publicar agora na Cloudflare? [s/N]: "
+read -r CONFIRMAR_DEPLOY
+
+case "$CONFIRMAR_DEPLOY" in
+    s|S|sim|SIM|Sim)
+        echo
+        echo "Publicando na Cloudflare..."
+
+        if npx wrangler deploy; then
+            echo
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "✓ Deploy concluído com sucesso."
+        else
+            echo
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "✗ Falha no deploy."
+            exit 1
+        fi
+        ;;
+    *)
+        echo
+        echo "Publicação cancelada."
+        echo "Nenhuma alteração foi enviada à Cloudflare."
+        echo
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "✓ Validação concluída sem publicação."
+        ;;
+esac
