@@ -4,7 +4,7 @@
 
 - `/analytics`: resumo protegido por `ADMIN_PASSWORD` e `SESSION_SECRET`, com períodos de 1, 7 e 30 dias. Mostra carregamentos do cardápio, aberturas de produto, cliques para o cardápio oficial, erros de carregamento, produtos mais abertos, filtros usados e origem dos cliques.
 - Cloudflare Web Analytics: page views e métricas de navegação do beacon em `public/index.html`.
-- Cloudflare Workers → `testecardapio` → Observability: logs e erros do Worker. Falhas de consulta ao Analytics SQL são registradas como `analytics_query_error`.
+- Cloudflare Workers → `cardapio` → Observability: logs e erros do Worker. Falhas de consulta ao Analytics SQL são registradas como `analytics_query_error`.
 - Workers Analytics Engine: dataset `cardapio_events`, usado pelos eventos enviados ao endpoint `POST /api/analytics`.
 
 ## Eventos

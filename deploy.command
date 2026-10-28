@@ -36,7 +36,7 @@ echo "Validando o Worker e os arquivos estáticos..."
 npx --yes wrangler deploy --config wrangler.jsonc --dry-run
 
 echo
-echo "Publicando no serviço testecardapio..."
+echo "Publicando no serviço cardapio..."
 npx --yes wrangler deploy --config wrangler.jsonc
 
 echo

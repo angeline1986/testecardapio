@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../src/worker.js';
 
-const origin = 'https://testecardapio.example';
+const origin = 'https://cardapio.chefdaniteles.workers.dev';
 function environment() {
   const points = [];
   const queries = [];
