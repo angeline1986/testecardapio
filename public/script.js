@@ -1,267 +1,204 @@
+const categoryLabels = { promocoes: 'Promoções', salgados: 'Salgados', doces: 'Doces' };
+const assetBase = 'assets/chef-dani/';
+const grid = document.getElementById('grid');
+const results = document.getElementById('results');
 const modal = document.getElementById('modal');
-const fechar = document.getElementById('fechar');
-const cards = document.querySelectorAll('.card');
-const filtros = document.querySelectorAll('.filtros button');
+const modalBox = modal.querySelector('.modal-box');
+const closeButton = document.getElementById('fechar');
+const filters = [...document.querySelectorAll('.filtros button')];
+const money = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+let products = [];
+let activeProduct = null;
+let triggerButton = null;
+let openedAt = 0;
+let currentFilter = 'todos';
 
-let cardAtual = null;
-let modalAbertoEm = null;
-
-/* =========================================================
-   ANALYTICS
-   Os eventos são enviados para o próprio Worker.
-
-   O endpoint /api/analytics será criado no próximo passo.
-   ========================================================= */
-
-function track(evento, dados = {}) {
-  const payload = {
-    event: evento,
-    timestamp: new Date().toISOString(),
-    path: window.location.pathname,
-    ...dados
-  };
-
-  // Mantém o evento visível no console para facilitar os testes.
-  console.debug('[analytics]', payload);
-
+function track(event, data = {}) {
+  const payload = { event, timestamp: new Date().toISOString(), path: location.pathname, ...data };
+  const body = JSON.stringify(payload);
   try {
-    const body = JSON.stringify(payload);
-
-    /*
-     * sendBeacon é ideal para analytics porque não bloqueia
-     * a navegação e continua funcionando mesmo quando a página
-     * está sendo fechada.
-     */
     if (navigator.sendBeacon) {
-      const blob = new Blob(
-        [body],
-        { type: 'application/json' }
-      );
-
-      navigator.sendBeacon('/api/analytics', blob);
-      return;
+      navigator.sendBeacon('/api/analytics', new Blob([body], { type: 'application/json' }));
+    } else {
+      fetch('/api/analytics', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true }).catch(() => {});
     }
-
-    // Fallback para navegadores sem sendBeacon.
-    fetch('/api/analytics', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body,
-      keepalive: true
-    }).catch((erro) => {
-      console.warn(
-        '[analytics] Não foi possível enviar o evento:',
-        erro
-      );
-    });
-
-  } catch (erro) {
-    console.warn(
-      '[analytics] Falha ao preparar o evento:',
-      erro
-    );
+  } catch {
+    // Analytics must never interrupt browsing the menu.
   }
 }
 
+function productImage(product) {
+  if (product.image) {
+    const image = document.createElement('img');
+    image.src = assetBase + product.image;
+    image.alt = product.image_alt || product.name;
+    image.width = 400;
+    image.height = 400;
+    image.loading = 'lazy';
+    return image;
+  }
+  const placeholder = document.createElement('div');
+  placeholder.className = 'image-placeholder';
+  placeholder.innerHTML = '<img src="assets/chef-dani/marca.png" alt="" width="74" height="74"><span>Foto indisponível</span>';
+  return placeholder;
+}
 
-/* =========================================================
-   MODAL
-   ========================================================= */
+function renderProducts() {
+  grid.replaceChildren();
+  products.forEach((product) => {
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.dataset.categoria = product.category;
+    if (!product.available) card.classList.add('sold-out');
 
-function abrirModal(card) {
-  const nome =
-    card.dataset.nome ||
-    card.querySelector('h3')?.textContent?.trim() ||
-    '';
+    const body = document.createElement('div');
+    body.className = 'card-body';
+    const labels = document.createElement('div');
+    labels.className = 'card-labels';
+    const tag = document.createElement('span');
+    tag.className = 'tag';
+    tag.textContent = categoryLabels[product.category];
+    labels.append(tag);
+    if (!product.available) {
+      const status = document.createElement('span');
+      status.className = 'stock-badge';
+      status.textContent = 'Esgotado';
+      labels.append(status);
+    }
+    const heading = document.createElement('h3');
+    heading.textContent = product.name;
+    const description = document.createElement('p');
+    description.textContent = product.summary;
+    const footer = document.createElement('div');
+    footer.className = 'card-footer';
+    const priceGroup = document.createElement('div');
+    priceGroup.className = 'price-group';
+    if (product.previous_price && product.previous_price > product.price) {
+      const oldPrice = document.createElement('del');
+      oldPrice.className = 'old-price';
+      oldPrice.textContent = money.format(product.previous_price);
+      priceGroup.append(oldPrice);
+    }
+    const price = document.createElement('span');
+    price.className = 'preco';
+    price.textContent = money.format(product.price);
+    priceGroup.append(price);
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'card-action';
+    button.setAttribute('aria-label', 'Ver detalhes de ' + product.name);
+    button.innerHTML = 'Detalhes <span aria-hidden="true">↗</span>';
+    button.addEventListener('click', () => openModal(product, button));
 
-  const emoji =
-    card.querySelector('.card-emoji')?.textContent?.trim() ||
-    '';
+    footer.append(priceGroup, button);
+    body.append(labels, heading, description, footer);
+    card.append(productImage(product), body);
+    grid.append(card);
+  });
+}
 
-  const categoria = card.dataset.categoria || '';
-  const preco = card.dataset.preco || '';
+function applyFilter(category, shouldTrack = true) {
+  currentFilter = category;
+  filters.forEach((button) => {
+    const active = button.dataset.filtro === category;
+    button.classList.toggle('ativo', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+  let count = 0;
+  grid.querySelectorAll('.card').forEach((card) => {
+    const visible = category === 'todos' || card.dataset.categoria === category;
+    card.hidden = !visible;
+    if (visible) count += 1;
+  });
+  results.textContent = count + (count === 1 ? ' produto encontrado' : ' produtos encontrados');
+  if (shouldTrack) track('filter_click', { filter: category, results: count });
+}
 
-  document.getElementById('modal-nome').textContent =
-    `${emoji} ${nome}`.trim();
-
-  document.getElementById('modal-desc').textContent =
-    card.dataset.desc || '';
-
-  document.getElementById('modal-ingredientes').textContent =
-    '🧂 Ingredientes: ' + (card.dataset.ingredientes || '');
-
-  document.getElementById('modal-preco').textContent =
-    preco;
-
-  cardAtual = card;
-  modalAbertoEm = Date.now();
-
-  modal.classList.add('aberto');
+function openModal(product, button) {
+  activeProduct = product;
+  triggerButton = button;
+  openedAt = Date.now();
+  const modalImage = document.getElementById('modal-imagem');
+  modalBox.classList.toggle('no-image', !product.image);
+  modalImage.hidden = !product.image;
+  if (product.image) {
+    modalImage.src = assetBase + product.image;
+    modalImage.alt = product.image_alt || product.name;
+  }
+  document.getElementById('modal-categoria').textContent = categoryLabels[product.category];
+  document.getElementById('modal-nome').textContent = product.name;
+  document.getElementById('modal-desc').textContent = product.description;
+  document.getElementById('modal-status').textContent = product.available ? 'Disponível na consulta de 28/10/2026.' : 'Esgotado na consulta de 28/10/2026.';
+  const oldPrice = document.getElementById('modal-old-price');
+  oldPrice.hidden = !product.previous_price || product.previous_price <= product.price;
+  oldPrice.textContent = oldPrice.hidden ? '' : money.format(product.previous_price);
+  document.getElementById('modal-preco').textContent = money.format(product.price);
+  modal.hidden = false;
   modal.setAttribute('aria-hidden', 'false');
-
-  fechar.focus();
-
-  track('sauce_open', {
-    sauce: nome,
-    category: categoria,
-    price: preco
-  });
+  document.body.classList.add('modal-open');
+  closeButton.focus();
+  // The Worker currently stores product names in its legacy "sauce" field.
+  track('product_open', { sauce: product.name, category: product.category, price: money.format(product.price) });
 }
 
-
-function fecharModal(origem = 'unknown') {
-  if (!modal.classList.contains('aberto')) {
-    return;
-  }
-
-  let duracao = 0;
-
-  if (modalAbertoEm) {
-    duracao = Math.round(
-      (Date.now() - modalAbertoEm) / 1000
-    );
-  }
-
-  if (cardAtual) {
-    const nome =
-      cardAtual.dataset.nome ||
-      cardAtual.querySelector('h3')?.textContent?.trim() ||
-      '';
-
-    track('sauce_close', {
-      sauce: nome,
-      category: cardAtual.dataset.categoria || '',
-      duration_seconds: duracao,
-      close_method: origem
-    });
-  }
-
-  modal.classList.remove('aberto');
+function closeModal(method) {
+  if (modal.hidden) return;
+  track('product_close', {
+    sauce: activeProduct.name,
+    category: activeProduct.category,
+    duration_seconds: Math.round((Date.now() - openedAt) / 1000),
+    close_method: method
+  });
+  modal.hidden = true;
   modal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('modal-open');
+  triggerButton?.focus();
+  activeProduct = null;
+  triggerButton = null;
+}
 
-  const cardAnterior = cardAtual;
+filters.forEach((button) => button.addEventListener('click', () => applyFilter(button.dataset.filtro)));
+document.querySelectorAll('[data-category-link]').forEach((button) => {
+  button.addEventListener('click', () => {
+    applyFilter(button.dataset.categoryLink);
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.getElementById('cardapio').scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth' });
+  });
+});
+closeButton.addEventListener('click', () => closeModal('button'));
+modal.addEventListener('click', (event) => { if (event.target === modal) closeModal('backdrop'); });
+document.addEventListener('keydown', (event) => {
+  if (modal.hidden) return;
+  if (event.key === 'Escape') closeModal('escape');
+  if (event.key === 'Tab') {
+    const focusables = [closeButton, document.getElementById('modal-desc'), modal.querySelector('.official-link')];
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+});
 
-  cardAtual = null;
-  modalAbertoEm = null;
-
-  if (cardAnterior) {
-    cardAnterior.focus();
+async function loadCatalog() {
+  if (location.protocol === 'file:') return;
+  results.textContent = 'Carregando produtos…';
+  try {
+    const response = await fetch('products.json');
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+    const catalog = await response.json();
+    products = catalog.products;
+    renderProducts();
+    applyFilter(currentFilter, false);
+    track('menu_view', { sauces: products.length, language: navigator.language || '' });
+  } catch (error) {
+    results.textContent = 'Não foi possível carregar o cardápio. Atualize a página para tentar novamente.';
+    console.error('Erro ao carregar o cardápio:', error);
   }
 }
 
-
-/* =========================================================
-   CARDS
-   ========================================================= */
-
-cards.forEach((card) => {
-
-  card.addEventListener('click', () => {
-    abrirModal(card);
-  });
-
-  card.addEventListener('keydown', (event) => {
-
-    if (
-      event.key === 'Enter' ||
-      event.key === ' '
-    ) {
-      event.preventDefault();
-      abrirModal(card);
-    }
-
-  });
-
-});
-
-
-/* =========================================================
-   FECHAR MODAL
-   ========================================================= */
-
-fechar.addEventListener('click', () => {
-  fecharModal('button');
-});
-
-
-modal.addEventListener('click', (event) => {
-
-  if (event.target === modal) {
-    fecharModal('backdrop');
-  }
-
-});
-
-
-document.addEventListener('keydown', (event) => {
-
-  if (
-    event.key === 'Escape' &&
-    modal.classList.contains('aberto')
-  ) {
-    fecharModal('escape');
-  }
-
-});
-
-
-/* =========================================================
-   FILTROS
-   ========================================================= */
-
-filtros.forEach((btn) => {
-
-  btn.addEventListener('click', () => {
-
-    const ativoAtual =
-      document.querySelector('.filtros button.ativo');
-
-    if (ativoAtual) {
-      ativoAtual.classList.remove('ativo');
-    }
-
-    btn.classList.add('ativo');
-
-    const filtro = btn.dataset.filtro;
-
-    let resultados = 0;
-
-    cards.forEach((card) => {
-
-      const visivel =
-        filtro === 'todos' ||
-        card.dataset.categoria === filtro;
-
-      card.style.display =
-        visivel ? 'block' : 'none';
-
-      if (visivel) {
-        resultados++;
-      }
-
-    });
-
-    track('filter_click', {
-      filter: filtro,
-      results: resultados
-    });
-
-  });
-
-});
-
-
-/* =========================================================
-   VISUALIZAÇÃO DO CARDÁPIO
-   ========================================================= */
-
-window.addEventListener('load', () => {
-
-  track('menu_view', {
-    sauces: cards.length,
-    language: navigator.language || ''
-  });
-
-});
+loadCatalog();

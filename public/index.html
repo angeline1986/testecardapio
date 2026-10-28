@@ -1,372 +1,88 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>Cardápio de Molhos</title>
-  <meta
-    name="description"
-    content="Cardápio de molhos — consulte opções, ingredientes e preços."
-  />
-
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f4ec">
+  <meta name="description" content="Conheça o cardápio da Chef Dani Teles: tortas, pizzas, esfihas e doces sem açúcar e sem lactose.">
+  <title>Cardápio | Chef Dani Teles</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    #local-preview-notice { display: none; }
+    html[data-file-preview] body { margin: 0; background: #f7f4ec; color: #242421; }
+    html[data-file-preview] body > :not(#local-preview-notice) { display: none !important; }
+    html[data-file-preview] #local-preview-notice { display: block; max-width: 620px; margin: 12vh auto; padding: 32px; font: 16px/1.6 Arial, sans-serif; }
+    html[data-file-preview] #local-preview-notice h1 { font-size: 30px; line-height: 1.15; }
+    html[data-file-preview] #local-preview-notice code { padding: 3px 6px; background: #e9e5d8; border-radius: 5px; }
+  </style>
+  <script>if (location.protocol === 'file:') document.documentElement.setAttribute('data-file-preview', '');</script>
 </head>
-
 <body>
-
-  <header>
-    <h1>🍶 Cardápio de Molhos</h1>
-    <p>Escolha o molho perfeito para o seu prato</p>
+  <div id="local-preview-notice">
+    <h1>Abra a prévia pelo servidor local</h1>
+    <p>Este cardápio precisa carregar fotos, estilos e dados de produtos. Na pasta do projeto, dê dois cliques em <code>preview.command</code> e use o endereço <code>http://127.0.0.1:...</code> que abrir no navegador.</p>
+    <p>Mantenha a janela do Terminal aberta enquanto visualiza a página.</p>
+  </div>
+  <a class="skip-link" href="#cardapio">Pular para o cardápio</a>
+  <header class="site-header" id="inicio">
+    <div class="container header-inner">
+      <a class="brand" href="#inicio" aria-label="Chef Dani Teles, início">
+        <img src="assets/chef-dani/marca.png" alt="" width="48" height="48"><span>Chef Dani <strong>Teles</strong></span>
+      </a>
+      <nav class="site-nav" aria-label="Navegação principal"><a href="#inicio">Início</a><a href="#categorias">Categorias</a><a href="#cardapio">Cardápio</a></nav>
+      <a class="header-cta" href="#cardapio">Explorar cardápio <span aria-hidden="true">↗</span></a>
+    </div>
   </header>
 
-  <nav class="filtros" aria-label="Categorias de molhos">
-    <button
-      type="button"
-      class="ativo"
-      data-filtro="todos"
-      data-analytics="filter"
-    >
-      Todos
-    </button>
-
-    <button
-      type="button"
-      data-filtro="classico"
-      data-analytics="filter"
-    >
-      Clássicos
-    </button>
-
-    <button
-      type="button"
-      data-filtro="picante"
-      data-analytics="filter"
-    >
-      Picantes
-    </button>
-
-    <button
-      type="button"
-      data-filtro="cremoso"
-      data-analytics="filter"
-    >
-      Cremosos
-    </button>
-
-    <button
-      type="button"
-      data-filtro="vegano"
-      data-analytics="filter"
-    >
-      Veganos
-    </button>
-  </nav>
-
-  <main class="grid" id="grid">
-
-    <div
-      class="card"
-      data-categoria="classico"
-      data-nome="Molho Bolonhesa"
-      data-desc="Clássico molho italiano com carne moída e tomate."
-      data-ingredientes="Carne moída, tomate, cebola, alho, vinho tinto, ervas."
-      data-preco="R$ 18,00"
-      data-analytics="sauce"
-      tabindex="0"
-      role="button"
-    >
-      <div class="card-emoji">🍝</div>
-      <div class="card-body">
-        <h3>Molho Bolonhesa</h3>
-        <p>Clássico molho italiano com carne moída e tomate.</p>
-        <div class="card-footer">
-          <span class="preco">R$ 18,00</span>
-          <span class="tag">Clássico</span>
-        </div>
+  <main>
+    <section class="hero container" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <span class="eyebrow eyebrow-light">CHEF DANI TELES • CARDÁPIO</span>
+        <h1 id="hero-title">Sabores que fazem cada momento especial.</h1>
+        <p>Descubra tortas, pizzas, esfihas e doces em uma seleção feita para abrir o apetite.</p>
+        <a class="pill-button pill-button-yellow" href="#cardapio">Ver o cardápio <span aria-hidden="true">↗</span></a>
       </div>
-    </div>
-
-    <div
-      class="card"
-      data-categoria="classico"
-      data-nome="Molho Pesto"
-      data-desc="Molho fresco de manjericão com azeite e parmesão."
-      data-ingredientes="Manjericão, azeite, pinhão, alho, parmesão."
-      data-preco="R$ 16,00"
-      data-analytics="sauce"
-      tabindex="0"
-      role="button"
-    >
-      <div class="card-emoji">🌿</div>
-      <div class="card-body">
-        <h3>Molho Pesto</h3>
-        <p>Molho fresco de manjericão com azeite e parmesão.</p>
-        <div class="card-footer">
-          <span class="preco">R$ 16,00</span>
-          <span class="tag">Clássico</span>
-        </div>
+      <div class="hero-gallery" aria-hidden="true">
+        <img src="assets/chef-dani/pizza-frango.jpg" alt="" width="400" height="400">
+        <img src="assets/chef-dani/esfiha-carne-light.jpg" alt="" width="400" height="400">
+        <img src="assets/chef-dani/torta-frango-light.jpg" alt="" width="400" height="400">
+        <img src="assets/chef-dani/cajuzinhos.jpg" alt="" width="400" height="400">
       </div>
-    </div>
+      <div class="hero-seal" aria-hidden="true"><span>FEITO PARA<br>DESPERTAR</span><strong>o apetite</strong></div>
+    </section>
 
-    <div
-      class="card"
-      data-categoria="classico"
-      data-nome="Molho Marinara"
-      data-desc="Molho de tomate rústico com ervas mediterrâneas."
-      data-ingredientes="Tomate, alho, orégano, azeite, manjericão."
-      data-preco="R$ 13,00"
-      data-analytics="sauce"
-      tabindex="0"
-      role="button"
-    >
-      <div class="card-emoji">⚓</div>
-      <div class="card-body">
-        <h3>Molho Marinara</h3>
-        <p>Molho de tomate rústico com ervas mediterrâneas.</p>
-        <div class="card-footer">
-          <span class="preco">R$ 13,00</span>
-          <span class="tag">Clássico</span>
-        </div>
+    <section class="categories section-space container" id="categorias" aria-labelledby="categories-title">
+      <div class="section-heading"><span class="eyebrow">EXPLORE OS SABORES</span><h2 id="categories-title">O que você procura hoje?</h2><p>Escolha uma categoria para encontrar seus favoritos.</p></div>
+      <div class="category-grid">
+        <button class="category-tile" type="button" data-category-link="promocoes"><img src="assets/chef-dani/pizza-frango-kit.jpg" alt="" width="400" height="400"><span class="category-name">Promoções</span><span class="category-arrow" aria-hidden="true">↗</span></button>
+        <button class="category-tile" type="button" data-category-link="salgados"><img src="assets/chef-dani/esfiha-frango-fit.jpg" alt="" width="400" height="400"><span class="category-name">Salgados</span><span class="category-arrow" aria-hidden="true">↗</span></button>
+        <button class="category-tile" type="button" data-category-link="doces"><img src="assets/chef-dani/canjica-350.jpg" alt="" width="400" height="400"><span class="category-name">Doces</span><span class="category-arrow" aria-hidden="true">↗</span></button>
+        <button class="category-tile" type="button" data-category-link="todos"><img src="assets/chef-dani/torta-frango-fit.jpg" alt="" width="400" height="400"><span class="category-name">Ver tudo</span><span class="category-arrow" aria-hidden="true">↗</span></button>
       </div>
-    </div>
+    </section>
 
-    <div
-      class="card"
-      data-categoria="picante"
-      data-nome="Molho Arrabbiata"
-      data-desc="Molho de tomate apimentado, típico da culinária romana."
-      data-ingredientes="Tomate, pimenta calabresa, alho, azeite."
-      data-preco="R$ 14,00"
-      data-analytics="sauce"
-      tabindex="0"
-      role="button"
-    >
-      <div class="card-emoji">🌶️</div>
-      <div class="card-body">
-        <h3>Molho Arrabbiata</h3>
-        <p>Molho de tomate apimentado, típico da culinária romana.</p>
-        <div class="card-footer">
-          <span class="preco">R$ 14,00</span>
-          <span class="tag">Picante</span>
-        </div>
-      </div>
-    </div>
+    <section class="highlight-band" aria-label="Destaque"><div class="container highlight-inner"><span class="highlight-icon" aria-hidden="true">✦</span><div><strong>Encontre o sabor para o seu momento.</strong><p>Explore as opções e veja os detalhes de cada produto.</p></div><a href="#cardapio">Conhecer produtos <span aria-hidden="true">↗</span></a></div></section>
 
-    <div
-      class="card"
-      data-categoria="picante"
-      data-nome="Molho Harissa"
-      data-desc="Pasta picante do norte da África com pimentas defumadas."
-      data-ingredientes="Pimenta vermelha, cominho, coentro, alho, azeite."
-      data-preco="R$ 15,00"
-      data-analytics="sauce"
-      tabindex="0"
-      role="button"
-    >
-      <div class="card-emoji">🔥</div>
-      <div class="card-body">
-        <h3>Molho Harissa</h3>
-        <p>Pasta picante do norte da África com pimentas defumadas.</p>
-        <div class="card-footer">
-          <span class="preco">R$ 15,00</span>
-          <span class="tag">Picante</span>
-        </div>
-      </div>
-    </div>
+    <section class="menu section-space container" id="cardapio" aria-labelledby="menu-title">
+      <div class="section-heading"><span class="eyebrow">CARDÁPIO CHEF DANI TELES</span><h2 id="menu-title">Escolha seu favorito</h2><p>Preços e disponibilidade consultados em 28/10/2026. Confirme os dados no <a href="https://instadelivery.com.br/daniteles" target="_blank" rel="noopener noreferrer">cardápio oficial</a>.</p></div>
+      <nav class="filtros" aria-label="Filtrar produtos">
+        <button type="button" class="ativo" data-filtro="todos" aria-pressed="true">Todos</button>
+        <button type="button" data-filtro="promocoes" aria-pressed="false">Promoções</button>
+        <button type="button" data-filtro="salgados" aria-pressed="false">Salgados</button>
+        <button type="button" data-filtro="doces" aria-pressed="false">Doces</button>
+      </nav>
+      <p class="results" id="results" role="status" aria-live="polite"></p>
+      <div class="product-grid" id="grid"></div>
+    </section>
 
-    <div
-      class="card"
-      data-categoria="picante"
-      data-nome="Molho Sriracha"
-      data-desc="Molho picante tailandês com pimenta e alho."
-      data-ingredientes="Pimenta jalapeño, alho, vinagre, açúcar, sal."
-      data-preco="R$ 11,00"
-      data-analytics="sauce"
-      tabindex="0"
-      role="button"
-    >
-      <div class="card-emoji">🌶</div>
-      <div class="card-body">
-        <h3>Molho Sriracha</h3>
-        <p>Molho picante tailandês com pimenta e alho.</p>
-        <div class="card-footer">
-          <span class="preco">R$ 11,00</span>
-          <span class="tag">Picante</span>
-        </div>
-      </div>
-    </div>
-
-    <div
-      class="card"
-      data-categoria="cremoso"
-      data-nome="Molho Alfredo"
-      data-desc="Cremoso molho à base de manteiga e parmesão."
-      data-ingredientes="Manteiga, creme de leite, parmesão, noz-moscada."
-      data-preco="R$ 20,00"
-      data-analytics="sauce"
-      tabindex="0"
-      role="button"
-    >
-      <div class="card-emoji">🧀</div>
-      <div class="card-body">
-        <h3>Molho Alfredo</h3>
-        <p>Cremoso molho à base de manteiga e parmesão.</p>
-        <div class="card-footer">
-          <span class="preco">R$ 20,00</span>
-          <span class="tag">Cremoso</span>
-        </div>
-      </div>
-    </div>
-
-    <div
-      class="card"
-      data-categoria="cremoso"
-      data-nome="Molho Carbonara"
-      data-desc="Molho cremoso com ovos, queijo e pancetta."
-      data-ingredientes="Ovos, pecorino, pancetta, pimenta-do-reino."
-      data-preco="R$ 22,00"
-      data-analytics="sauce"
-      tabindex="0"
-      role="button"
-    >
-      <div class="card-emoji">🥚</div>
-      <div class="card-body">
-        <h3>Molho Carbonara</h3>
-        <p>Molho cremoso com ovos, queijo e pancetta.</p>
-        <div class="card-footer">
-          <span class="preco">R$ 22,00</span>
-          <span class="tag">Cremoso</span>
-        </div>
-      </div>
-    </div>
-
-    <div
-      class="card"
-      data-categoria="cremoso"
-      data-nome="Molho Bechamel"
-      data-desc="Molho branco clássico da culinária francesa."
-      data-ingredientes="Manteiga, farinha, leite, noz-moscada, sal."
-      data-preco="R$ 16,00"
-      data-analytics="sauce"
-      tabindex="0"
-      role="button"
-    >
-      <div class="card-emoji">🥛</div>
-      <div class="card-body">
-        <h3>Molho Bechamel</h3>
-        <p>Molho branco clássico da culinária francesa.</p>
-        <div class="card-footer">
-          <span class="preco">R$ 16,00</span>
-          <span class="tag">Cremoso</span>
-        </div>
-      </div>
-    </div>
-
-    <div
-      class="card"
-      data-categoria="vegano"
-      data-nome="Molho Pomodoro"
-      data-desc="Molho de tomate simples e aromático."
-      data-ingredientes="Tomate pelado, alho, azeite, manjericão, sal."
-      data-preco="R$ 12,00"
-      data-analytics="sauce"
-      tabindex="0"
-      role="button"
-    >
-      <div class="card-emoji">🍅</div>
-      <div class="card-body">
-        <h3>Molho Pomodoro</h3>
-        <p>Molho de tomate simples e aromático.</p>
-        <div class="card-footer">
-          <span class="preco">R$ 12,00</span>
-          <span class="tag">Vegano</span>
-        </div>
-      </div>
-    </div>
-
-    <div
-      class="card"
-      data-categoria="vegano"
-      data-nome="Molho Tahine"
-      data-desc="Molho cremoso de gergelim, muito usado na culinária árabe."
-      data-ingredientes="Pasta de gergelim, limão, alho, azeite, sal."
-      data-preco="R$ 13,00"
-      data-analytics="sauce"
-      tabindex="0"
-      role="button"
-    >
-      <div class="card-emoji">🫙</div>
-      <div class="card-body">
-        <h3>Molho Tahine</h3>
-        <p>Molho cremoso de gergelim, muito usado na culinária árabe.</p>
-        <div class="card-footer">
-          <span class="preco">R$ 13,00</span>
-          <span class="tag">Vegano</span>
-        </div>
-      </div>
-    </div>
-
-    <div
-      class="card"
-      data-categoria="vegano"
-      data-nome="Molho Chimichurri"
-      data-desc="Molho argentino fresco, ideal para carnes grelhadas."
-      data-ingredientes="Salsinha, orégano, alho, vinagre, azeite, pimenta."
-      data-preco="R$ 14,00"
-      data-analytics="sauce"
-      tabindex="0"
-      role="button"
-    >
-      <div class="card-emoji">🌱</div>
-      <div class="card-body">
-        <h3>Molho Chimichurri</h3>
-        <p>Molho argentino fresco, ideal para carnes grelhadas.</p>
-        <div class="card-footer">
-          <span class="preco">R$ 14,00</span>
-          <span class="tag">Vegano</span>
-        </div>
-      </div>
-    </div>
-
+    <section class="closing-banner container" aria-labelledby="closing-title"><div class="closing-copy"><span class="eyebrow eyebrow-light">TEM PARA CADA VONTADE</span><h2 id="closing-title">Do salgado ao doce, encontre o seu próximo favorito.</h2><a class="pill-button pill-button-yellow" href="https://instadelivery.com.br/daniteles" target="_blank" rel="noopener noreferrer">Ver cardápio oficial <span aria-hidden="true">↗</span></a></div><img src="assets/chef-dani/esfiha-carne-light.jpg" alt="Esfiha de carne" width="400" height="400" loading="lazy"></section>
   </main>
 
-  <!-- Modal de detalhes -->
-  <div
-    class="modal"
-    id="modal"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="modal-nome"
-    aria-hidden="true"
-  >
-    <div class="modal-box">
-      <button
-        type="button"
-        class="fechar"
-        id="fechar"
-        aria-label="Fechar detalhes"
-      >
-        &times;
-      </button>
+  <footer class="site-footer"><div class="container footer-inner"><div class="footer-brand"><img src="assets/chef-dani/marca.png" alt="" width="50" height="50"><span>Chef Dani <strong>Teles</strong></span></div><p>Informações consultadas em 28/10/2026. Confirme preços e disponibilidade antes de pedir.</p><a href="#inicio">Voltar ao topo ↑</a></div></footer>
 
-      <h2 id="modal-nome"></h2>
-      <p id="modal-desc"></p>
-      <p id="modal-ingredientes"></p>
-      <span id="modal-preco"></span>
-    </div>
-  </div>
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-nome" aria-hidden="true" hidden><div class="modal-box"><button type="button" class="fechar" id="fechar" aria-label="Fechar detalhes">×</button><img id="modal-imagem" src="assets/chef-dani/marca.png" alt="" width="400" height="400"><div class="modal-content"><span class="tag" id="modal-categoria"></span><h2 id="modal-nome"></h2><p id="modal-desc" tabindex="0"></p><p id="modal-status"></p><div class="modal-prices"><del id="modal-old-price"></del><strong id="modal-preco"></strong></div><a class="official-link" href="https://instadelivery.com.br/daniteles" target="_blank" rel="noopener noreferrer">Conferir no cardápio oficial ↗</a></div></div></div>
 
-  <!-- Aplicação -->
-  <script src="script.js"></script>
-
-  <!-- Cloudflare Web Analytics -->
-  <script
-    type="module"
-    src="https://static.cloudflareinsights.com/beacon.min.js"
-    data-cf-beacon='{"token":"a80d476655b943ce987af831a8c1c536"}'>
-  </script>
-  <!-- End Cloudflare Web Analytics -->
-
+  <script src="script.js" defer></script>
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"a80d476655b943ce987af831a8c1c536"}'></script>
 </body>
 </html>
