@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "testecardapio",
+  "account_id": "7496391ddd3c860ed9431530397973d3",
   "main": "src/worker.js",
   "compatibility_date": "2026-09-16",
   "assets": {

@@ -1,95 +1,43 @@
 #!/bin/bash
+set -euo pipefail
 
-set -u
+PROJECT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+cd "$PROJECT_DIR"
 
-echo
-echo "🍶 DEPLOY DO CARDÁPIO"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo
+echo "🍶 Deploy do cardápio Chef Dani Teles"
+echo "Projeto: $PROJECT_DIR"
 
-ERROS=0
-
-if [ -f "wrangler.jsonc" ]; then
-    echo "✓ wrangler.jsonc"
-else
-    echo "✗ wrangler.jsonc não encontrado"
-    ERROS=$((ERROS + 1))
-fi
-
-if [ -d "public" ]; then
-    echo "✓ public/"
-else
-    echo "✗ public/ não encontrado"
-    ERROS=$((ERROS + 1))
-fi
-
-if [ -f "src/worker.js" ]; then
-    echo "✓ src/worker.js"
-else
-    echo "✗ src/worker.js não encontrado"
-    ERROS=$((ERROS + 1))
-fi
-
-if [ "$ERROS" -ne 0 ]; then
-    echo
-    echo "❌ Projeto incompleto: $ERROS item(ns) ausente(s)."
-    echo "Deploy não executado."
+for path in wrangler.jsonc src/worker.js public/index.html public/style.css public/script.js public/products.json; do
+  if [ ! -f "$path" ]; then
+    echo "Arquivo necessário ausente: $path" >&2
     exit 1
+  fi
+done
+
+if [ ! -d public/assets/chef-dani ]; then
+  echo "Pasta de imagens ausente: public/assets/chef-dani" >&2
+  exit 1
+fi
+
+if ! command -v npx >/dev/null 2>&1; then
+  echo "Node.js/npm não encontrado. Instale o Node.js antes de publicar." >&2
+  exit 1
 fi
 
 echo
-echo "Validando autenticação Cloudflare..."
-
-if npx wrangler whoami >/dev/null 2>&1; then
-    echo "✓ Cloudflare autenticada"
-else
-    echo "✗ Cloudflare não autenticada"
-    echo "Deploy não executado."
-    exit 1
+echo "Verificando autenticação da Cloudflare..."
+if ! npx --yes wrangler whoami >/dev/null; then
+  echo "Cloudflare não autenticada. Execute: npx wrangler login" >&2
+  exit 1
 fi
 
 echo
-echo "Executando validação local do deploy..."
-
-if npx wrangler deploy --dry-run; then
-    echo
-    echo "✓ Dry-run concluído com sucesso."
-    echo "Nenhum arquivo foi publicado na Cloudflare."
-else
-    echo
-    echo "✗ Dry-run falhou."
-    echo "Deploy não executado."
-    exit 1
-fi
+echo "Validando o Worker e os arquivos estáticos..."
+npx --yes wrangler deploy --config wrangler.jsonc --dry-run
 
 echo
-echo "Dry-run aprovado. O projeto está pronto para publicação."
+echo "Publicando no serviço testecardapio..."
+npx --yes wrangler deploy --config wrangler.jsonc
+
 echo
-printf "Publicar agora na Cloudflare? [s/N]: "
-read -r CONFIRMAR_DEPLOY
-
-case "$CONFIRMAR_DEPLOY" in
-    s|S|sim|SIM|Sim)
-        echo
-        echo "Publicando na Cloudflare..."
-
-        if npx wrangler deploy; then
-            echo
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo "✓ Deploy concluído com sucesso."
-        else
-            echo
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo "✗ Falha no deploy."
-            exit 1
-        fi
-        ;;
-    *)
-        echo
-        echo "Publicação cancelada."
-        echo "Nenhuma alteração foi enviada à Cloudflare."
-        echo
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        echo "✓ Validação concluída sem publicação."
-        ;;
-esac
+echo "✓ Deploy concluído."
