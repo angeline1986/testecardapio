@@ -15,9 +15,10 @@ function environment() {
       ANALYTICS: { writeDataPoint: point => points.push(point) },
       ANALYTICS_SQL: { query: async request => {
         queries.push(request);
-        if (request.query.includes('AS event_name')) return { data: [{ event_name: 'product_open', total: 3 }] };
+        if (request.query.includes('AS event_name')) return { data: [{ event_name: 'product_open', total: 3 }, { event_name: 'official_menu_click', total: 2 }] };
         if (request.query.includes('AS product')) return { data: [{ product: '<script>alert(1)</script>', total: 2 }] };
         if (request.query.includes('AS category_filter')) return { data: [{ category_filter: 'doces', total: 1 }] };
+        if (request.query.includes('AS modal_product')) return { data: [{ modal_product: 'Torta', total: 1 }] };
         return { data: [{ click_source: 'product_modal', total: 1 }] };
       } },
       ASSETS: { fetch: () => new Response('asset') }
@@ -42,6 +43,14 @@ test('records product fields and preserves historical positions', async () => {
   }), env);
   assert.equal(points[1].blobs[1], 'Legado');
   assert.equal(points[1].doubles[2], 12);
+
+  await worker.fetch(new Request(origin + '/api/analytics', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ event: 'official_menu_click', source: 'product_modal', product_id: 42, product_name: 'Torta' })
+  }), env);
+  assert.equal(points[2].blobs[1], 'Torta');
+  assert.equal(points[2].blobs[6], '42');
+  assert.equal(points[2].blobs[7], 'product_modal');
 });
 
 test('rejects unsupported events', async () => {
@@ -72,6 +81,10 @@ test('dashboard requires a session, queries a bounded period, and escapes produc
   assert.match(html, /últimos 30 dias/);
   assert.match(html, /&lt;script&gt;alert\(1\)&lt;\/script&gt;/);
   assert.doesNotMatch(html, /<script>alert/);
-  assert.equal(queries.length, 4);
+  assert.match(html, /Cliques em Detalhes por produto/);
+  assert.match(html, /Cliques no link oficial dentro de Detalhes/);
+  assert.match(html, /Torta/);
+  assert.equal(queries.length, 5);
   assert.ok(queries.every(({ query, params }) => query.includes('timestamp >= $start') && params.start));
+  assert.ok(queries.some(({ query }) => query.includes("blob1 = 'official_menu_click' AND blob8 = 'product_modal'")));
 });

@@ -2,7 +2,7 @@
 
 ## Onde acompanhar
 
-- `/analytics`: resumo protegido por `ADMIN_PASSWORD` e `SESSION_SECRET`, com períodos de 1, 7 e 30 dias. Mostra carregamentos do cardápio, aberturas de produto, cliques para o cardápio oficial, erros de carregamento, produtos mais abertos, filtros usados e origem dos cliques.
+- `/analytics`: resumo protegido por `ADMIN_PASSWORD` e `SESSION_SECRET`, com períodos de 1, 7 e 30 dias. Mostra carregamentos do cardápio, cliques em **Detalhes** por produto, cliques no link oficial dentro da janela de detalhes por produto, erros de carregamento, filtros usados e origem dos cliques para o cardápio oficial.
 - Cloudflare Web Analytics: page views e métricas de navegação do beacon em `public/index.html`.
 - Cloudflare Workers → `cardapio` → Observability: logs e erros do Worker. Falhas de consulta ao Analytics SQL são registradas como `analytics_query_error`.
 - Workers Analytics Engine: dataset `cardapio_events`, usado pelos eventos enviados ao endpoint `POST /api/analytics`.
@@ -13,9 +13,9 @@
 | --- | --- | --- |
 | `menu_view` | Catálogo JSON carregado | `product_count`, `available_count` |
 | `filter_click` | Filtro ou categoria selecionada | `filter`, `results`, `source` |
-| `product_open` | Detalhes de produto abertos | `product_id`, `product_name`, `category`, `price`, `availability` |
+| `product_open` | Botão **Detalhes** do cartão clicado e janela de detalhes aberta | `product_id`, `product_name`, `category`, `price`, `availability` |
 | `product_close` | Detalhes fechados | mesmos campos, `duration_seconds`, `close_method` |
-| `official_menu_click` | Link para Instadelivery clicado | `source`; dados do produto quando parte do modal |
+| `official_menu_click` | Link para Instadelivery clicado | `source`; `product_id` e `product_name` quando o link fica dentro da janela de detalhes (`source=product_modal`) |
 | `catalog_error` | Falha ao carregar `products.json` | `error_type` (`http` ou `other`) |
 
 Os eventos não incluem informações pessoais. O clique para o cardápio oficial indica interesse, não pedido ou venda. Preços e disponibilidade são uma fotografia do catálogo consultado em 28/10/2026.
