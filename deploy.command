@@ -4,7 +4,7 @@ set -euo pipefail
 PROJECT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 cd "$PROJECT_DIR"
 
-echo "🍶 Deploy do cardápio Chef Dani Teles"
+echo "👩‍🍳 Deploy do cardápio Chef Dani Teles"
 echo "Projeto: $PROJECT_DIR"
 
 for path in wrangler.jsonc src/worker.js public/index.html public/style.css public/script.js public/products.json; do

@@ -13,5 +13,15 @@
       "binding": "ANALYTICS",
       "dataset": "cardapio_events"
     }
-  ]
+  ],
+  "analytics": {
+    "binding": "ANALYTICS_SQL"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "secrets": {
+    "required": ["ADMIN_PASSWORD", "SESSION_SECRET"]
+  }
 }

@@ -17,9 +17,7 @@ function track(event, data = {}) {
   const payload = { event, timestamp: new Date().toISOString(), path: location.pathname, ...data };
   const body = JSON.stringify(payload);
   try {
-    if (navigator.sendBeacon) {
-      navigator.sendBeacon('/api/analytics', new Blob([body], { type: 'application/json' }));
-    } else {
+    if (!navigator.sendBeacon || !navigator.sendBeacon('/api/analytics', new Blob([body], { type: 'application/json' }))) {
       fetch('/api/analytics', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true }).catch(() => {});
     }
   } catch {
@@ -97,7 +95,7 @@ function renderProducts() {
   });
 }
 
-function applyFilter(category, shouldTrack = true) {
+function applyFilter(category, shouldTrack = true, source = 'filter_button') {
   currentFilter = category;
   filters.forEach((button) => {
     const active = button.dataset.filtro === category;
@@ -111,7 +109,7 @@ function applyFilter(category, shouldTrack = true) {
     if (visible) count += 1;
   });
   results.textContent = count + (count === 1 ? ' produto encontrado' : ' produtos encontrados');
-  if (shouldTrack) track('filter_click', { filter: category, results: count });
+  if (shouldTrack) track('filter_click', { filter: category, results: count, source });
 }
 
 function openModal(product, button) {
@@ -137,15 +135,17 @@ function openModal(product, button) {
   modal.setAttribute('aria-hidden', 'false');
   document.body.classList.add('modal-open');
   closeButton.focus();
-  // The Worker currently stores product names in its legacy "sauce" field.
-  track('product_open', { sauce: product.name, category: product.category, price: money.format(product.price) });
+  track('product_open', { product_id: product.id, product_name: product.name, category: product.category, price: product.price, availability: product.available ? 'available' : 'sold_out' });
 }
 
 function closeModal(method) {
   if (modal.hidden) return;
   track('product_close', {
-    sauce: activeProduct.name,
+    product_id: activeProduct.id,
+    product_name: activeProduct.name,
     category: activeProduct.category,
+    price: activeProduct.price,
+    availability: activeProduct.available ? 'available' : 'sold_out',
     duration_seconds: Math.round((Date.now() - openedAt) / 1000),
     close_method: method
   });
@@ -160,9 +160,17 @@ function closeModal(method) {
 filters.forEach((button) => button.addEventListener('click', () => applyFilter(button.dataset.filtro)));
 document.querySelectorAll('[data-category-link]').forEach((button) => {
   button.addEventListener('click', () => {
-    applyFilter(button.dataset.categoryLink);
+    applyFilter(button.dataset.categoryLink, true, 'category_tile');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     document.getElementById('cardapio').scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth' });
+  });
+});
+document.querySelectorAll('[data-analytics-source]').forEach((link) => {
+  link.addEventListener('click', () => {
+    const context = link.dataset.analyticsSource === 'product_modal' && activeProduct
+      ? { product_id: activeProduct.id, product_name: activeProduct.name, category: activeProduct.category, price: activeProduct.price }
+      : {};
+    track('official_menu_click', { source: link.dataset.analyticsSource, ...context });
   });
 });
 closeButton.addEventListener('click', () => closeModal('button'));
@@ -194,10 +202,11 @@ async function loadCatalog() {
     products = catalog.products;
     renderProducts();
     applyFilter(currentFilter, false);
-    track('menu_view', { sauces: products.length, language: navigator.language || '' });
+    track('menu_view', { product_count: products.length, available_count: products.filter((product) => product.available).length });
   } catch (error) {
     results.textContent = 'Não foi possível carregar o cardápio. Atualize a página para tentar novamente.';
     console.error('Erro ao carregar o cardápio:', error);
+    track('catalog_error', { error_type: error.message.startsWith('HTTP ') ? 'http' : 'other' });
   }
 }
 

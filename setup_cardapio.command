@@ -3,7 +3,7 @@
 set -u
 
 echo
-echo "🍶 CONFIGURAÇÃO DO CARDÁPIO"
+echo "👩‍🍳 CONFIGURAÇÃO DO CARDÁPIO"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo
 
@@ -142,7 +142,17 @@ if [ ! -f "wrangler.jsonc" ]; then
       "binding": "ANALYTICS",
       "dataset": "$DATASET_NAME"
     }
-  ]
+  ],
+  "analytics": {
+    "binding": "ANALYTICS_SQL"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "secrets": {
+    "required": ["ADMIN_PASSWORD", "SESSION_SECRET"]
+  }
 }
 WRANGLER_EOF
             then
@@ -242,6 +252,13 @@ else
                 ;;
         esac
     fi
+fi
+
+if printf '%s' "$SECRETS_JSON" | node -e 'let input="";process.stdin.on("data",c=>input+=c);process.stdin.on("end",()=>{try{const s=JSON.parse(input||"[]");process.exit(Array.isArray(s)&&s.some(i=>i&&i.name==="SESSION_SECRET")?0:1)}catch(e){process.exit(2)}});'; then
+    echo "✓ SESSION_SECRET já configurada"
+else
+    echo "○ SESSION_SECRET não encontrada ou não foi possível consultar os secrets."
+    echo "  Configure antes do deploy: npx wrangler secret put SESSION_SECRET"
 fi
 
 if [ -x "./deploy.command" ]; then
