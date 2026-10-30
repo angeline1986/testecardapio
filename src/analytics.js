@@ -12,10 +12,11 @@ export async function loadAnalyticsDashboard(env, days) {
     `SELECT blob4 AS category, COUNT(*) AS total FROM ${dashboardDataset} WHERE timestamp >= $start AND blob1 = 'filter_click' GROUP BY blob4 ORDER BY total DESC LIMIT 20`,
     `SELECT blob8 AS click_source, COUNT(*) AS total FROM ${dashboardDataset} WHERE timestamp >= $start AND blob1 = 'official_menu_click' GROUP BY blob8 ORDER BY total DESC LIMIT 20`,
     `SELECT blob7 AS product_id, blob2 AS product_name, COUNT(*) AS total FROM ${dashboardDataset} WHERE timestamp >= $start AND blob1 = 'official_menu_click' AND blob8 = 'product_modal' AND blob2 != '' GROUP BY blob7, blob2 ORDER BY total DESC LIMIT 20`,
-    `SELECT blob8 AS open_source, COUNT(*) AS total FROM ${dashboardDataset} WHERE timestamp >= $start AND blob1 = 'product_open' GROUP BY blob8 ORDER BY total DESC LIMIT 10`
+    `SELECT blob8 AS open_source, COUNT(*) AS total FROM ${dashboardDataset} WHERE timestamp >= $start AND blob1 = 'product_open' GROUP BY blob8 ORDER BY total DESC LIMIT 10`,
+    `SELECT blob7 AS opened_product_id, blob2 AS opened_product_name, COUNT(*) AS total FROM ${dashboardDataset} WHERE timestamp >= $start AND blob1 = 'product_open' AND blob2 != '' GROUP BY blob7, blob2 ORDER BY total DESC LIMIT 20`
   ];
 
-  const [events, filters, origins, products, productOpenSources] = await Promise.all(
+  const [events, filters, origins, products, productOpenSources, openedProducts] = await Promise.all(
     queries.map(async query => (await env.ANALYTICS_SQL.query({ query, params: { start } })).data || [])
   );
 
@@ -57,6 +58,11 @@ export async function loadAnalyticsDashboard(env, days) {
     top_converted_products: products.map(row => ({
       id: String(row.product_id || row.product_name || ""),
       name: String(row.product_name || "Produto sem nome"),
+      clicks: safeNumber(row.total)
+    })),
+    top_opened_products: openedProducts.map(row => ({
+      id: String(row.opened_product_id || row.opened_product_name || ""),
+      name: String(row.opened_product_name || "Produto sem nome"),
       clicks: safeNumber(row.total)
     })),
     filters_used: filters.map(row => ({
@@ -129,6 +135,13 @@ export function analyticsDashboardPage(days) {
 
     <div class="dashboard-grid" id="dashboard-grid">
       <section class="panel">
+        <div class="panel-heading"><h2>Produtos com mais detalhes abertos</h2><span class="panel-caption">Toques ou cliques para ver os detalhes</span></div>
+        <ul class="product-list" id="opened-product-list" aria-live="polite">
+          <li class="skeleton skeleton-row" aria-hidden="true"></li><li class="skeleton skeleton-row" aria-hidden="true"></li>
+          <li class="skeleton skeleton-row" aria-hidden="true"></li><li class="skeleton skeleton-row" aria-hidden="true"></li>
+        </ul>
+      </section>
+      <section class="panel">
         <div class="panel-heading"><h2>Produtos mais acessados no InstaDelivery</h2><span class="panel-caption">Cliques em “Ver cardápio oficial” dentro dos detalhes</span></div>
         <p class="panel-note">Este número conta quem saiu do cardápio para abrir o InstaDelivery. Abrir os detalhes do produto, por si só, não entra nesta lista.</p>
         <ul class="product-list" id="product-list" aria-live="polite">
@@ -154,6 +167,7 @@ export function analyticsDashboardPage(days) {
     const healthDetail = document.querySelector('#health-detail');
     const periodSubtitle = document.querySelector('#period-subtitle');
     const productList = document.querySelector('#product-list');
+    const openedProductList = document.querySelector('#opened-product-list');
     const filterList = document.querySelector('#filter-list');
     const productOpenList = document.querySelector('#product-open-list');
     const originList = document.querySelector('#origin-list');
@@ -216,10 +230,10 @@ export function analyticsDashboardPage(days) {
       return labels[category] || category.charAt(0).toLocaleUpperCase('pt-BR') + category.slice(1);
     }
 
-    function renderProducts(products) {
-      productList.replaceChildren();
+    function renderProducts(products, list = productList, emptyMessage = 'Nenhum clique no link oficial dos produtos neste período.') {
+      list.replaceChildren();
       if (!products.length) {
-        productList.append(element('li', 'empty-list', 'Nenhum clique no link oficial dos produtos neste período.'));
+        list.append(element('li', 'empty-list', emptyMessage));
         return;
       }
       const maxClicks = Math.max(0, ...products.map(item => Number(item.clicks) || 0));
@@ -237,7 +251,7 @@ export function analyticsDashboardPage(days) {
         track.append(fill);
         info.append(name, track);
         row.append(info, element('span', 'count-badge', formatCount(clicks) + (clicks === 1 ? ' clique' : ' cliques')));
-        productList.append(row);
+        list.append(row);
       });
     }
 
@@ -303,6 +317,7 @@ export function analyticsDashboardPage(days) {
       healthStatus.removeAttribute('aria-label');
       healthDetail.textContent = summary.catalog_errors + (summary.catalog_errors === 1 ? ' erro no período' : ' erros no período');
       renderProducts(data.top_converted_products || []);
+      renderProducts(data.top_opened_products || [], openedProductList, 'Nenhum detalhe de produto foi aberto neste período.');
       renderFilters(data.filters_used || []);
       renderProductOpenSources(summary);
       renderOrigins(data.conversion_origins || []);

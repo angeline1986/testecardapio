@@ -28,6 +28,10 @@ function environment() {
           { click_source: 'product_modal', total: 8 },
           { click_source: 'closing_banner', total: 1 }
         ] };
+        if (request.query.includes('AS opened_product_id')) return { data: [
+          { opened_product_id: '42', opened_product_name: 'Cocada Cremosa', total: 11 },
+          { opened_product_id: '43', opened_product_name: 'Torta', total: 7 }
+        ] };
         if (request.query.includes('AS product_id')) return { data: [
           { product_id: '42', product_name: 'Cocada Cremosa (Sem Açúcar & Sem Lactose) - 130ml', total: 2 },
           { product_id: '43', product_name: 'Torta', total: 1 }
@@ -97,6 +101,7 @@ test('dashboard shell and data API require a session and return metrics for the 
   assert.match(html, /skeleton-card/);
   assert.match(html, /Nenhuma interação registrada neste período/);
   assert.match(html, /Aberturas dos detalhes/);
+  assert.match(html, /Produtos com mais detalhes abertos/);
   assert.match(html, /Pelo cartão do produto/);
   assert.match(html, /Pelo botão “Detalhes”/);
   assert.match(html, /Abrir os detalhes do produto, por si só, não entra nesta lista/);
@@ -131,13 +136,15 @@ test('dashboard shell and data API require a session and return metrics for the 
   assert.equal(data.total_events, 64);
   assert.equal(data.top_converted_products[0].name, 'Cocada Cremosa (Sem Açúcar & Sem Lactose) - 130ml');
   assert.equal(data.top_converted_products[0].clicks, 2);
+  assert.deepEqual(data.top_opened_products[0], { id: '42', name: 'Cocada Cremosa', clicks: 11 });
   assert.deepEqual(data.filters_used[0], { category: 'doces', count: 4 });
   assert.deepEqual(data.conversion_origins[0], { origin: 'Detalhes do produto', clicks: 8, percentage: 88.9 });
   assert.deepEqual(data.conversion_origins[1], { origin: 'Banner final', clicks: 1, percentage: 11.1 });
-  assert.equal(queries.length, 5);
+  assert.equal(queries.length, 6);
   assert.ok(queries.every(({ query, params }) => query.includes('timestamp >= $start') && params.start));
   assert.ok(queries.some(({ query }) => query.includes('GROUP BY blob7, blob2')));
   assert.ok(queries.some(({ query }) => query.includes("blob1 = 'official_menu_click' AND blob8 = 'product_modal'")));
+  assert.ok(queries.some(({ query }) => query.includes("blob1 = 'product_open'") && query.includes('GROUP BY blob7, blob2')));
 });
 
 test('conversion rates return zero when the period has no menu loads', async () => {
