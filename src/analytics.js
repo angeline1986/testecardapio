@@ -129,7 +129,8 @@ export function analyticsDashboardPage(days) {
 
     <div class="dashboard-grid" id="dashboard-grid">
       <section class="panel">
-        <div class="panel-heading"><h2>Produtos com Maior Intenção</h2><span class="panel-caption">Cliques no link oficial dentro dos detalhes</span></div>
+        <div class="panel-heading"><h2>Produtos mais acessados no InstaDelivery</h2><span class="panel-caption">Cliques em “Ver cardápio oficial” dentro dos detalhes</span></div>
+        <p class="panel-note">Este número conta quem saiu do cardápio para abrir o InstaDelivery. Abrir os detalhes do produto, por si só, não entra nesta lista.</p>
         <ul class="product-list" id="product-list" aria-live="polite">
           <li class="skeleton skeleton-row" aria-hidden="true"></li><li class="skeleton skeleton-row" aria-hidden="true"></li>
           <li class="skeleton skeleton-row" aria-hidden="true"></li><li class="skeleton skeleton-row" aria-hidden="true"></li>
@@ -137,7 +138,7 @@ export function analyticsDashboardPage(days) {
       </section>
       <div class="panel-stack side-panels">
         <section class="panel"><h2>Filtros Mais Utilizados</h2><ul class="filter-list" id="filter-list"><li class="skeleton skeleton-row" aria-hidden="true"></li><li class="skeleton skeleton-row" aria-hidden="true"></li></ul></section>
-        <section class="panel"><h2>Interação com produtos</h2><ul class="filter-list" id="product-open-list"><li class="skeleton skeleton-row" aria-hidden="true"></li><li class="skeleton skeleton-row" aria-hidden="true"></li></ul></section>
+        <section class="panel"><h2>Aberturas dos detalhes</h2><p class="panel-note">Total de vezes que alguém abriu a janela de detalhes. As duas formas abaixo somam esse total.</p><ul class="filter-list" id="product-open-list"><li class="skeleton skeleton-row" aria-hidden="true"></li><li class="skeleton skeleton-row" aria-hidden="true"></li></ul></section>
         <section class="panel"><h2>Origem da Conversão</h2><ul class="origin-list" id="origin-list"><li class="skeleton skeleton-row" aria-hidden="true"></li><li class="skeleton skeleton-row" aria-hidden="true"></li></ul></section>
       </div>
     </div>
@@ -278,8 +279,8 @@ export function analyticsDashboardPage(days) {
     function renderProductOpenSources(summary) {
       productOpenList.replaceChildren();
       [
-        ['Cliques no produto', summary.product_card_clicks],
-        ['Cliques em Detalhes', summary.details_button_clicks]
+        ['Pelo cartão do produto', summary.product_card_clicks],
+        ['Pelo botão “Detalhes”', summary.details_button_clicks]
       ].forEach(([label, count]) => {
         const row = element('li', 'filter-row');
         row.append(element('span', 'filter-name', label));
@@ -292,7 +293,7 @@ export function analyticsDashboardPage(days) {
       const summary = data.summary;
       kpiGrid.replaceChildren(
         metricCard('Acessos totais', summary.menus_loaded, '', 'Cardápios carregados', {}),
-        metricCard('Interesse direto', summary.products_opened, formatPercent(summary.engagement_rate) + ' engaj.', 'Produtos abertos / clicados', {}),
+        metricCard('Aberturas dos detalhes', summary.products_opened, formatPercent(summary.engagement_rate) + ' engaj.', 'Vezes que a janela de um produto foi aberta', {}),
         metricCard('Intenção de compra', summary.official_menu_clicks, formatPercent(summary.conversion_rate) + ' conv.', 'Cliques no cardápio oficial', { badgeClass: 'blue' }),
         metricCard('Saúde do catálogo', summary.catalog_errors, summary.catalog_errors === 0 ? '100% funcional' : summary.catalog_errors + (summary.catalog_errors === 1 ? ' incidente' : ' incidentes'), summary.catalog_errors === 0 ? 'Zero falhas de renderização' : 'Falhas registradas no período', { good: summary.catalog_errors === 0, badgeClass: summary.catalog_errors === 0 ? '' : 'bad' })
       );

@@ -96,9 +96,11 @@ test('dashboard shell and data API require a session and return metrics for the 
   assert.match(html, /data-days="30"/);
   assert.match(html, /skeleton-card/);
   assert.match(html, /Nenhuma interação registrada neste período/);
-  assert.match(html, /Interação com produtos/);
-  assert.match(html, /Cliques no produto/);
-  assert.match(html, /Cliques em Detalhes/);
+  assert.match(html, /Aberturas dos detalhes/);
+  assert.match(html, /Pelo cartão do produto/);
+  assert.match(html, /Pelo botão “Detalhes”/);
+  assert.match(html, /Abrir os detalhes do produto, por si só, não entra nesta lista/);
+  assert.match(html, /Cliques em “Ver cardápio oficial” dentro dos detalhes/);
   assert.match(html, /grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
   assert.match(html, /@media\(min-width:768px\).*grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
   assert.match(html, /@media\(max-width:1023px\)/);
