@@ -26,12 +26,24 @@
     body { margin: 0; background: var(--paper); color: var(--ink); line-height: 1.6; }
     a { color: var(--green); text-underline-offset: .2em; }
     a:hover { color: var(--green-dark); }
-    .topbar { padding: 18px max(24px, calc((100% - 1120px) / 2)); border-bottom: 1px solid var(--line); display:flex; align-items:center; justify-content:space-between; gap:18px; }
+    .topbar { padding: 18px max(24px, calc((100% - 1360px) / 2)); border-bottom: 1px solid var(--line); display:flex; align-items:center; justify-content:space-between; gap:18px; }
     .brand { font-weight: 800; letter-spacing: -.03em; color: var(--ink); text-decoration:none; }
     .brand span { color: var(--green); }
     .toplink { font-size:.9rem; font-weight:700; }
-    main { width:min(100% - 40px, 1040px); margin:0 auto; }
-    .hero { padding:70px 0 38px; }
+    main { width:min(100% - 48px, 1360px); margin:0 auto; padding:32px 0 64px; }
+    .guide-layout { display:grid; grid-template-columns:250px minmax(0, 1fr); gap:48px; align-items:start; }
+    .sidebar { position:sticky; top:24px; padding:18px 14px; border:1px solid var(--line); border-radius:16px; background:var(--card); }
+    .sidebar-title { margin:0 10px 13px; color:var(--muted); font-size:.76rem; font-weight:850; letter-spacing:.1em; text-transform:uppercase; }
+    .contents { display:grid; gap:4px; }
+    .contents a { display:flex; align-items:center; gap:11px; min-height:44px; padding:9px 11px; border:0; border-radius:9px; color:var(--ink); font-size:.92rem; text-decoration:none; }
+    .contents a:hover { background:#f2f0e9; }
+    .contents a[aria-current="page"] { background:#eaf0d1; color:var(--green-dark); font-weight:800; }
+    .nav-number { display:inline-flex; flex:0 0 25px; width:25px; height:25px; align-items:center; justify-content:center; border-radius:50%; background:#f0eee6; font-size:.78rem; font-weight:800; }
+    .contents a[aria-current="page"] .nav-number { background:var(--green); color:white; }
+    .sidebar-link { display:block; margin:16px 10px 2px; padding-top:14px; border-top:1px solid var(--line); font-size:.88rem; font-weight:750; }
+    .guide-content { min-width:0; max-width:1000px; }
+    .guide-page[hidden] { display:none; }
+    .hero { padding:24px 0 28px; }
     .eyebrow { color:var(--green); text-transform:uppercase; letter-spacing:.14em; font-size:.76rem; font-weight:800; }
     h1 { max-width:800px; margin:12px 0 16px; font-family:Georgia, "Times New Roman", serif; font-size:clamp(2.4rem, 6vw, 4.4rem); letter-spacing:-.045em; line-height:1.03; }
     .intro { max-width:680px; color:var(--muted); font-size:1.1rem; }
@@ -43,11 +55,7 @@
     .notice strong { display:block; }
     .notice p { margin:3px 0 0; color:#555844; }
     .notice-icon { font-size:1.3rem; }
-    .contents { display:flex; flex-wrap:wrap; gap:8px; padding:0 0 25px; }
-    .contents a { background:rgba(255,253,248,.8); border:1px solid var(--line); border-radius:999px; padding:7px 12px; font-size:.88rem; text-decoration:none; color:var(--ink); }
-    .contents a:hover { border-color:var(--green); }
-    .steps { display:grid; gap:18px; padding-bottom:62px; }
-    .step { display:grid; grid-template-columns:76px minmax(0,1fr); gap:10px; padding:28px; background:var(--card); border:1px solid var(--line); border-radius:20px; box-shadow:0 8px 30px rgba(44,39,25,.035); scroll-margin-top:20px; }
+    .step { display:grid; grid-template-columns:64px minmax(0,1fr); gap:10px; padding:30px; background:var(--card); border:1px solid var(--line); border-radius:20px; box-shadow:0 8px 30px rgba(44,39,25,.035); }
     .number { display:flex; align-items:center; justify-content:center; width:48px; height:48px; border-radius:15px; background:var(--lime); font-weight:900; font-size:1.2rem; }
     .step h2 { margin:3px 0 8px; font-family:Georgia, "Times New Roman", serif; font-size:1.65rem; line-height:1.2; }
     .step h3 { margin:20px 0 8px; font-family:Georgia, "Times New Roman", serif; font-size:1.35rem; line-height:1.2; }
@@ -68,17 +76,34 @@
     details { margin-top:14px; padding:12px 14px; border:1px solid var(--line); border-radius:10px; background:#f8f6ef; }
     summary { color:var(--green-dark); cursor:pointer; font-weight:750; }
     .linkrow { display:flex; flex-wrap:wrap; gap:10px 20px; margin-top:14px; font-weight:700; }
+    .welcome-card { margin:24px 0 0; padding:24px; border:1px solid var(--line); border-radius:18px; background:var(--card); }
+    .welcome-card h2 { margin:0 0 7px; font-family:Georgia, "Times New Roman", serif; font-size:1.55rem; }
+    .welcome-card p { margin:0; color:var(--muted); }
+    .page-nav { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-top:18px; padding:14px 0; }
+    .page-nav a { display:inline-flex; align-items:center; min-height:44px; padding:9px 14px; border:1px solid var(--line); border-radius:999px; background:var(--card); color:var(--ink); text-decoration:none; font-weight:750; }
+    .page-nav a:hover { border-color:var(--green); }
+    .page-nav a[hidden] { display:none; }
+    .page-progress { color:var(--muted); font-size:.88rem; text-align:center; }
     footer { padding:26px 20px 38px; border-top:1px solid var(--line); text-align:center; color:var(--muted); font-size:.9rem; }
     footer a { font-weight:700; }
     @media (max-width:640px) {
       .topbar { padding:15px 20px; }
       .toplink { font-size:.8rem; }
-      main { width:min(100% - 28px, 1040px); }
-      .hero { padding-top:48px; }
-      .step { grid-template-columns:46px minmax(0,1fr); gap:8px; padding:19px 15px; }
+      main { width:min(100% - 24px, 900px); padding:14px 0 42px; }
+      .guide-layout { grid-template-columns:minmax(0,1fr); gap:16px; }
+      .sidebar { position:sticky; top:0; z-index:5; padding:8px; border-radius:12px; box-shadow:0 5px 18px rgba(44,39,25,.08); }
+      .sidebar-title, .sidebar-link { display:none; }
+      .contents { display:flex; gap:6px; overflow-x:auto; scrollbar-width:thin; }
+      .contents a { flex:0 0 auto; min-height:40px; padding:6px 9px; font-size:.82rem; white-space:nowrap; }
+      .nav-number { flex-basis:22px; width:22px; height:22px; }
+      .hero { padding-top:20px; }
+      .step { grid-template-columns:42px minmax(0,1fr); gap:8px; padding:19px 15px; }
       .number { width:38px; height:38px; border-radius:12px; }
       .step h2 { font-size:1.4rem; }
       .codebox { padding-left:13px; }
+      .page-nav { gap:6px; }
+      .page-nav a { padding:8px 10px; font-size:.84rem; }
+      .page-progress { font-size:.77rem; }
     }
     @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
   </style>
@@ -90,32 +115,51 @@
   </header>
 
   <main>
-    <section class="hero">
-      <div class="eyebrow">Guia para Windows</div>
-      <h1>Atualize, confira e publique com tranquilidade.</h1>
-      <p class="intro">Siga as etapas na ordem. Você vai abrir a pasta do projeto, alterar o cardápio, conferir a mudança numa cópia de teste e só então atualizar o site que os clientes acessam. As instruções abaixo são para Windows.</p>
-      <div class="hero-actions">
-        <a class="button" href="#preparar">Ver as etapas ↓</a>
-        <a class="button secondary" href="/analytics">Abrir estatísticas ↗</a>
-      </div>
-    </section>
+    <div class="guide-layout">
+      <aside class="sidebar" aria-label="Índice do tutorial">
+        <p class="sidebar-title">Índice do tutorial</p>
+        <nav class="contents" id="guide-index" aria-label="Páginas do tutorial">
+          <a href="#inicio" aria-current="page"><span class="nav-number">⌂</span> Comece aqui</a>
+          <a href="#preparar"><span class="nav-number">1</span> Preparar o computador</a>
+          <a href="#rodar"><span class="nav-number">2</span> Conferir a prévia</a>
+          <a href="#editar"><span class="nav-number">3</span> Editar o cardápio</a>
+          <a href="#publicar"><span class="nav-number">4</span> Publicar no site</a>
+          <a href="#acompanhar"><span class="nav-number">5</span> Ver estatísticas</a>
+          <a href="#git"><span class="nav-number">6</span> Guardar no GitHub</a>
+        </nav>
+        <a class="sidebar-link" href="/analytics">Abrir painel de estatísticas ↗</a>
+      </aside>
 
-    <aside class="notice">
-      <div class="notice-icon" aria-hidden="true">✦</div>
-      <div><strong>Primeiro confira. Depois publique.</strong><p>A prévia é uma cópia de teste no seu computador. O site público só muda quando você executa a etapa “Publicar”. Não há um comando separado para “build”.</p></div>
-    </aside>
+      <div class="guide-content">
+        <section class="guide-page" id="inicio">
+          <div class="hero">
+            <div class="eyebrow">Guia para Windows</div>
+            <h1>Atualize, confira e publique com tranquilidade.</h1>
+            <p class="intro">Siga as etapas na ordem. Você vai abrir a pasta do projeto, alterar o cardápio, conferir a mudança numa cópia de teste e só então atualizar o site que os clientes acessam.</p>
+            <div class="hero-actions">
+              <a class="button" href="#preparar">Começar pela etapa 1 →</a>
+              <a class="button secondary" href="/analytics">Abrir estatísticas ↗</a>
+            </div>
+          </div>
 
-    <nav class="contents" aria-label="Nesta página">
-      <a href="#preparar">1. Abrir o projeto</a><a href="#rodar">2. Conferir a prévia</a><a href="#editar">3. Fazer alterações</a><a href="#publicar">4. Publicar</a><a href="#acompanhar">5. Estatísticas</a><a href="#git">6. Guardar alterações</a>
-    </nav>
+          <aside class="notice">
+            <div class="notice-icon" aria-hidden="true">✦</div>
+            <div><strong>Primeiro confira. Depois publique.</strong><p>A prévia é uma cópia de teste no seu computador. O site público só muda quando você executa a etapa “Publicar”. Não há um comando separado para “build”.</p></div>
+          </aside>
 
-    <aside class="notice">
-      <div class="notice-icon" aria-hidden="true">1–2–3</div>
-      <div><strong>Como usar os comandos deste guia</strong><p>Cada caixa escura contém um comando. Clique em <strong>Copiar</strong>, clique na janela do <strong>Git Bash</strong>, clique com o botão direito para colar e pressione <strong>Enter</strong>. Espere o comando terminar antes de colar o próximo. Não cole comandos na barra de endereço do navegador.</p></div>
-    </aside>
+          <aside class="notice">
+            <div class="notice-icon" aria-hidden="true">1–2–3</div>
+            <div><strong>Como usar os comandos deste guia</strong><p>Cada caixa escura contém um comando. Clique em <strong>Copiar</strong>, clique na janela do <strong>Git Bash</strong>, clique com o botão direito para colar e pressione <strong>Enter</strong>. Espere o comando terminar antes de colar o próximo. Não cole comandos na barra de endereço do navegador.</p></div>
+          </aside>
 
-    <section class="steps">
-      <article class="step" id="preparar">
+          <div class="welcome-card">
+            <h2>O tutorial está dividido em páginas</h2>
+            <p>Use o índice à esquerda para abrir uma etapa específica. Os botões no fim de cada página também levam para a etapa anterior ou seguinte.</p>
+          </div>
+        </section>
+
+        <section class="guide-page" id="preparar" hidden>
+          <article class="step">
         <div class="number">1</div><div>
           <span class="step-label">Preparação — faça uma vez neste computador</span>
           <h2>Instalar os programas necessários</h2>
@@ -153,7 +197,10 @@
         </div>
       </article>
 
-      <article class="step" id="rodar">
+        </section>
+
+        <section class="guide-page" id="rodar" hidden>
+          <article class="step">
         <div class="number">2</div><div>
           <span class="step-label">Faça isso sempre que for revisar mudanças</span>
           <h2>Conferir uma prévia do cardápio</h2>
@@ -165,7 +212,10 @@
         </div>
       </article>
 
-      <article class="step" id="editar">
+        </section>
+
+        <section class="guide-page" id="editar" hidden>
+          <article class="step">
         <div class="number">3</div><div>
           <span class="step-label">Salve o arquivo e confira a prévia depois de cada mudança</span>
           <h2>Atualizar produtos, fotos e aparência</h2>
@@ -183,7 +233,10 @@
         </div>
       </article>
 
-      <article class="step" id="publicar">
+        </section>
+
+        <section class="guide-page" id="publicar" hidden>
+          <article class="step">
         <div class="number">4</div><div>
           <span class="step-label">Só faça isso depois de revisar tudo</span>
           <h2>Enviar a versão aprovada para o site</h2>
@@ -195,7 +248,10 @@
         </div>
       </article>
 
-      <article class="step" id="acompanhar">
+        </section>
+
+        <section class="guide-page" id="acompanhar" hidden>
+          <article class="step">
         <div class="number">5</div><div>
           <span class="step-label">Opcional</span>
           <h2>Consultar as estatísticas</h2>
@@ -212,7 +268,10 @@
         </div>
       </article>
 
-      <article class="step" id="git">
+        </section>
+
+        <section class="guide-page" id="git" hidden>
+          <article class="step">
         <div class="number">6</div><div>
           <span class="step-label">Para quem já usa GitHub</span>
           <h2>Sincronizar com o GitHub</h2>
@@ -226,11 +285,65 @@ git push origin main</code><button class="copy" type="button">Copiar</button></d
           <p class="tip">Se o Git Bash disser “nothing to commit” ou “não há alterações”, não existe mudança nova para guardar. Isso não é um erro.</p>
         </div>
       </article>
-    </section>
+        </section>
+
+        <nav class="page-nav" aria-label="Navegação entre páginas">
+          <a id="page-previous" href="#inicio">← Voltar</a>
+          <span class="page-progress" id="page-progress" aria-live="polite"></span>
+          <a id="page-next" href="#preparar">Próxima etapa →</a>
+        </nav>
+      </div>
+    </div>
   </main>
 
   <footer>Guia do projeto Cardápio Chef Dani Teles · <a href="/">Voltar ao cardápio</a></footer>
   <script>
+    const guidePages = Array.from(document.querySelectorAll('.guide-page'));
+    const guideLinks = Array.from(document.querySelectorAll('#guide-index a'));
+    const previousPage = document.querySelector('#page-previous');
+    const nextPage = document.querySelector('#page-next');
+    const pageProgress = document.querySelector('#page-progress');
+    const pageLabels = [
+      'Comece aqui',
+      'Preparar o computador',
+      'Conferir a prévia',
+      'Editar o cardápio',
+      'Publicar no site',
+      'Ver estatísticas',
+      'Guardar no GitHub'
+    ];
+
+    function showGuidePage() {
+      let currentId = window.location.hash.slice(1) || 'inicio';
+      let currentIndex = guidePages.findIndex((page) => page.id === currentId);
+      if (currentIndex < 0) {
+        currentIndex = 0;
+        currentId = guidePages[0].id;
+        window.history.replaceState(null, '', `#${currentId}`);
+      }
+
+      guidePages.forEach((page, index) => { page.hidden = index !== currentIndex; });
+      guideLinks.forEach((link, index) => {
+        if (index === currentIndex) link.setAttribute('aria-current', 'page');
+        else link.removeAttribute('aria-current');
+      });
+
+      previousPage.hidden = currentIndex === 0;
+      if (currentIndex > 0) {
+        previousPage.href = `#${guidePages[currentIndex - 1].id}`;
+        previousPage.textContent = `← ${pageLabels[currentIndex - 1]}`;
+      }
+      const nextIndex = currentIndex + 1;
+      nextPage.href = nextIndex < guidePages.length ? `#${guidePages[nextIndex].id}` : '#inicio';
+      nextPage.textContent = nextIndex < guidePages.length ? `Próxima: ${pageLabels[nextIndex]} →` : 'Voltar ao início ↑';
+      pageProgress.textContent = currentIndex === 0 ? 'Início' : `Etapa ${currentIndex} de ${guidePages.length - 1}`;
+      document.title = `${pageLabels[currentIndex]} · Guia Chef Dani Teles`;
+      window.scrollTo(0, 0);
+    }
+
+    window.addEventListener('hashchange', showGuidePage);
+    showGuidePage();
+
     document.querySelectorAll('.copy').forEach((button) => {
       button.addEventListener('click', async () => {
         const code = button.parentElement.querySelector('code').textContent;
