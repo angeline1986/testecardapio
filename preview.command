@@ -2,12 +2,18 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-if ! command -v python3 >/dev/null 2>&1; then
-  echo "Python 3 não encontrado. Instale o Python 3 para abrir a prévia local."
+if command -v python3 >/dev/null 2>&1; then
+  PYTHON_COMMAND=(python3)
+elif command -v python >/dev/null 2>&1; then
+  PYTHON_COMMAND=(python)
+elif command -v py >/dev/null 2>&1; then
+  PYTHON_COMMAND=(py -3)
+else
+  echo "Python 3 não encontrado. Instale o Python 3 e abra um novo Git Bash."
   exit 1
 fi
 
-python3 - "$@" <<'PY'
+"${PYTHON_COMMAND[@]}" - "$@" <<'PY'
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path

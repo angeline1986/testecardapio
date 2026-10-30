@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f5f1e8">
-  <meta name="description" content="Guia amigável para atualizar, conferir e publicar o cardápio Chef Dani Teles.">
-  <title>Como atualizar o cardápio · Chef Dani Teles</title>
+  <meta name="description" content="Guia para Windows: atualizar, conferir e publicar o cardápio Chef Dani Teles.">
+  <title>Como atualizar o cardápio no Windows · Chef Dani Teles</title>
   <style>
     :root {
       color-scheme: light;
@@ -50,6 +50,7 @@
     .step { display:grid; grid-template-columns:76px minmax(0,1fr); gap:10px; padding:28px; background:var(--card); border:1px solid var(--line); border-radius:20px; box-shadow:0 8px 30px rgba(44,39,25,.035); scroll-margin-top:20px; }
     .number { display:flex; align-items:center; justify-content:center; width:48px; height:48px; border-radius:15px; background:var(--lime); font-weight:900; font-size:1.2rem; }
     .step h2 { margin:3px 0 8px; font-family:Georgia, "Times New Roman", serif; font-size:1.65rem; line-height:1.2; }
+    .step h3 { margin:20px 0 8px; font-family:Georgia, "Times New Roman", serif; font-size:1.35rem; line-height:1.2; }
     .step p { margin:8px 0; color:#55554d; }
     .step ul { padding-left:20px; color:#55554d; }
     .step li { padding:3px 0; }
@@ -90,9 +91,9 @@
 
   <main>
     <section class="hero">
-      <div class="eyebrow">Guia de atualização do cardápio</div>
+      <div class="eyebrow">Guia para Windows</div>
       <h1>Atualize, confira e publique com tranquilidade.</h1>
-      <p class="intro">Siga as etapas na ordem. Você vai abrir a pasta do projeto, alterar o cardápio, conferir a mudança numa cópia de teste e só então atualizar o site que os clientes acessam.</p>
+      <p class="intro">Siga as etapas na ordem. Você vai abrir a pasta do projeto, alterar o cardápio, conferir a mudança numa cópia de teste e só então atualizar o site que os clientes acessam. As instruções abaixo são para Windows.</p>
       <div class="hero-actions">
         <a class="button" href="#preparar">Ver as etapas ↓</a>
         <a class="button secondary" href="/analytics">Abrir estatísticas ↗</a>
@@ -109,22 +110,35 @@
     </nav>
 
     <aside class="notice">
-      <div class="notice-icon" aria-hidden="true">⌘</div>
-      <div><strong>Como usar os comandos deste guia</strong><p>Cada caixa escura contém um comando. Clique em <strong>Copiar</strong>, clique na janela do Terminal, cole com <strong>Command (⌘) + V</strong> e pressione <strong>Enter</strong>. Espere o comando terminar antes de colar o próximo. Não cole comandos na barra de endereço do navegador.</p></div>
+      <div class="notice-icon" aria-hidden="true">1–2–3</div>
+      <div><strong>Como usar os comandos deste guia</strong><p>Cada caixa escura contém um comando. Clique em <strong>Copiar</strong>, clique na janela do <strong>Git Bash</strong>, clique com o botão direito para colar e pressione <strong>Enter</strong>. Espere o comando terminar antes de colar o próximo. Não cole comandos na barra de endereço do navegador.</p></div>
     </aside>
 
     <section class="steps">
       <article class="step" id="preparar">
         <div class="number">1</div><div>
-          <span class="step-label">Faça esta preparação uma vez em cada computador</span>
-          <h2>Abrir a pasta do projeto</h2>
-          <p>O <strong>Terminal</strong> é um aplicativo do Mac onde você cola comandos curtos para executar tarefas. Para abri-lo, pressione <strong>Command (⌘) + Espaço</strong>, escreva <strong>Terminal</strong> e pressione <strong>Enter</strong>.</p>
-          <p>Se este projeto já está no computador e dentro da pasta <strong>Documentos → TI → Projetos → testecardapio</strong>, clique em <strong>Copiar</strong> neste comando. Depois clique na janela do Terminal, cole o comando com <strong>Command (⌘) + V</strong> e pressione <strong>Enter</strong>:</p>
-          <div class="codebox"><code>cd "$HOME/Documents/TI/Projetos/testecardapio"</code><button class="copy" type="button">Copiar</button></div>
-          <p>Esse comando só informa ao Terminal qual pasta usar. Ele não altera o cardápio.</p>
-          <p><strong>Agora verifique se o computador está pronto.</strong> Copie, cole no Terminal e pressione Enter:</p>
+          <span class="step-label">Preparação — faça uma vez neste computador</span>
+          <h2>Instalar os programas necessários</h2>
+          <p>O projeto usa três programas gratuitos. Instale-os antes de continuar:</p>
+          <ul>
+            <li><strong>Git for Windows</strong> — inclui o Git Bash, a janela onde você vai colar os comandos. Durante a instalação, mantenha as opções padrão e confirme que <strong>Git Bash Here</strong> está selecionado. <a href="https://git-scm.com/download/win">Baixar Git for Windows ↗</a></li>
+            <li><strong>Node.js</strong> — na página, escolha a versão marcada como LTS e instale usando as opções padrão. <a href="https://nodejs.org/en/download">Baixar Node.js ↗</a></li>
+            <li><strong>Python 3</strong> — necessário para abrir a prévia do cardápio no computador. <a href="https://www.python.org/downloads/windows/">Baixar Python para Windows ↗</a></li>
+          </ul>
+          <p>Depois de instalar, feche e abra novamente o Git Bash para que ele reconheça os programas.</p>
+          <h3>Abrir o projeto no Git Bash</h3>
+          <p>O <strong>Git Bash</strong> é uma janela de comandos instalada junto com o Git for Windows. Use o Git Bash para executar os comandos deste guia.</p>
+          <p><strong>Se a pasta do projeto já existe:</strong> abra o Explorador de Arquivos, localize e abra a pasta <span class="inline-code">testecardapio</span>. Clique com o botão direito em uma área vazia dentro da pasta e escolha <strong>Git Bash Here</strong> (ou <strong>Mostrar mais opções → Git Bash Here</strong>). Uma janela do Git Bash abrirá já na pasta correta.</p>
+          <p><strong>Se ainda não baixou o projeto:</strong> abra o menu Iniciar, procure <strong>Git Bash</strong> e abra o aplicativo. Execute os dois comandos abaixo, um de cada vez, na ordem. O primeiro baixa o projeto e o segundo entra na pasta baixada:</p>
+          <div class="codebox"><code>git clone https://github.com/angeline1986/testecardapio.git</code><button class="copy" type="button">Copiar</button></div>
+          <div class="codebox"><code>cd testecardapio</code><button class="copy" type="button">Copiar</button></div>
+          <p><strong>Agora verifique se o computador está pronto.</strong> Na janela do Git Bash aberta dentro da pasta do projeto, copie este comando, cole com o botão direito e pressione Enter:</p>
           <div class="codebox"><code>./setup_cardapio.command</code><button class="copy" type="button">Copiar</button></div>
-          <p>O Terminal vai mostrar uma lista de itens com ✓. Se aparecer uma linha com ✗, a ferramenta indicada está faltando; peça ajuda para instalá-la antes de continuar. A prévia também precisa do Python 3.</p>
+          <p>O Git Bash vai mostrar uma lista de itens. ✓ significa que o programa está pronto. ✗ significa que ele não foi encontrado: instale o programa indicado, feche e abra o Git Bash e repita essa verificação.</p>
+          <details>
+            <summary>Não aparece a opção “Git Bash Here” no Explorador de Arquivos?</summary>
+            <p>O Git Bash não foi adicionado ao menu do botão direito. Execute novamente o instalador do Git for Windows e habilite a opção <strong>Git Bash Here</strong> na integração com o Explorador de Arquivos. Depois, feche e abra o Explorador de Arquivos e tente de novo.</p>
+          </details>
           <details>
             <summary>O assistente fez uma pergunta e não sei o que responder</summary>
             <p>Se perguntar <span class="inline-code">Configurar senha administrativa agora? [s/N]</span>, responda <strong>N</strong> se você não for a pessoa responsável pela senha do painel. Se for responsável, responda <strong>s</strong> e digite a nova senha quando solicitado; os caracteres não aparecem enquanto você digita, e isso é normal.</p>
@@ -132,15 +146,8 @@
             <p>Se informar que falta um segredo chamado <span class="inline-code">SESSION_SECRET</span>, não tente adivinhar um valor: peça ajuda à pessoa responsável pela conta Cloudflare antes de publicar.</p>
           </details>
           <details>
-            <summary>Não tem a pasta do projeto no computador?</summary>
-            <p>Use esta opção apenas se ainda não baixou o projeto neste computador. No Terminal, copie e execute um comando por vez, na ordem abaixo. O segundo comando entra na pasta que acabou de ser criada.</p>
-            <div class="codebox"><code>git clone https://github.com/angeline1986/testecardapio.git</code><button class="copy" type="button">Copiar</button></div>
-            <div class="codebox"><code>cd testecardapio</code><button class="copy" type="button">Copiar</button></div>
-            <p>Depois, execute <span class="inline-code">./setup_cardapio.command</span>, mostrado acima. Se o primeiro comando disser que <span class="inline-code">git</span> não foi encontrado, o Git precisa ser instalado neste computador.</p>
-          </details>
-          <details>
-            <summary>O Terminal diz que não está conectado à Cloudflare?</summary>
-            <p>A Cloudflare é o serviço onde o site está publicado. Copie e execute o comando abaixo. Uma página abrirá no navegador: entre na conta Cloudflare responsável pelo cardápio e autorize o acesso. Depois volte ao Terminal e execute novamente <span class="inline-code">./setup_cardapio.command</span>.</p>
+            <summary>O Git Bash diz que não está conectado à Cloudflare?</summary>
+            <p>A Cloudflare é o serviço onde o site está publicado. Copie e execute o comando abaixo. Uma página abrirá no navegador: entre na conta Cloudflare responsável pelo cardápio e autorize o acesso. Depois volte ao Git Bash e execute novamente <span class="inline-code">./setup_cardapio.command</span>.</p>
             <div class="codebox"><code>npx wrangler login</code><button class="copy" type="button">Copiar</button></div>
           </details>
         </div>
@@ -150,11 +157,11 @@
         <div class="number">2</div><div>
           <span class="step-label">Faça isso sempre que for revisar mudanças</span>
           <h2>Conferir uma prévia do cardápio</h2>
-          <p>Confirme que o Terminal ainda está usando a pasta <span class="inline-code">testecardapio</span>. Copie o comando, cole no Terminal e pressione Enter:</p>
+          <p>Confirme que a janela do Git Bash está aberta na pasta <span class="inline-code">testecardapio</span>. Copie o comando, cole com o botão direito e pressione Enter:</p>
           <div class="codebox"><code>./preview.command</code><button class="copy" type="button">Copiar</button></div>
-          <p>O navegador deve abrir uma página com o cardápio. O endereço começa com <span class="inline-code">http://127.0.0.1</span>; isso significa que você está vendo a cópia de teste no seu computador. Se o navegador não abrir sozinho, copie o endereço que apareceu no Terminal e cole-o na barra de endereço do navegador.</p>
-          <p>Depois de editar um arquivo, volte para essa página e atualize-a com <strong>Command (⌘) + R</strong> para ver a mudança. Mantenha o Terminal aberto enquanto estiver usando a prévia.</p>
-          <p class="tip"><strong>Para fechar a prévia:</strong> clique na janela do Terminal e pressione <strong>Control + C</strong>. Isso fecha só a cópia de teste; não publica nem apaga nada.</p>
+          <p>O navegador deve abrir uma página com o cardápio. O endereço começa com <span class="inline-code">http://127.0.0.1</span>; isso significa que você está vendo a cópia de teste no seu computador. Se o navegador não abrir sozinho, copie o endereço que apareceu no Git Bash e cole-o na barra de endereço do navegador.</p>
+          <p>Depois de editar um arquivo, volte para essa página e atualize-a com <strong>Ctrl + R</strong> para ver a mudança. Mantenha a janela do Git Bash aberta enquanto estiver usando a prévia.</p>
+          <p class="tip"><strong>Para fechar a prévia:</strong> clique na janela do Git Bash e pressione <strong>Ctrl + C</strong>. Isso fecha só a cópia de teste; não publica nem apaga nada.</p>
         </div>
       </article>
 
@@ -162,16 +169,16 @@
         <div class="number">3</div><div>
           <span class="step-label">Salve o arquivo e confira a prévia depois de cada mudança</span>
           <h2>Atualizar produtos, fotos e aparência</h2>
-          <p>Use um editor de código, como o Visual Studio Code. No VS Code, escolha <strong>File → Open Folder</strong> (Arquivo → Abrir Pasta), selecione a pasta <span class="inline-code">testecardapio</span> e clique em <strong>Open</strong> (Abrir). Os arquivos do projeto aparecem na coluna esquerda. Para atualizar um produto:</p>
+          <p>Use um editor de código, como o Visual Studio Code. No VS Code, escolha <strong>File → Open Folder</strong> (Arquivo → Abrir Pasta), selecione a pasta <span class="inline-code">testecardapio</span> e clique em <strong>Select Folder</strong> (Selecionar Pasta). Os arquivos do projeto aparecem na coluna esquerda. Para atualizar um produto:</p>
           <ul>
             <li>Na coluna esquerda, clique na seta ao lado de <span class="inline-code">public</span> e depois em <span class="inline-code">products.json</span>.</li>
-            <li>Pressione <strong>Command (⌘) + F</strong>, escreva o nome atual do produto e pressione Enter para encontrá-lo.</li>
+            <li>Pressione <strong>Ctrl + F</strong>, escreva o nome atual do produto e pressione Enter para encontrá-lo.</li>
             <li>Altere apenas o texto ou número entre aspas indicado abaixo. Não apague aspas, vírgulas ou chaves: elas são necessárias para o arquivo funcionar.</li>
             <li><strong>Textos e aparência da página:</strong> ficam em <span class="inline-code">public/index.html</span> e <span class="inline-code">public/style.css</span>. Essas partes não precisam ser alteradas para atualizar um preço ou uma foto.</li>
           </ul>
-          <p><strong>Preço:</strong> altere o número depois de <span class="inline-code">"price":</span>. Use ponto para centavos (por exemplo, <span class="inline-code">21.8</span> representa R$ 21,80). <strong>Disponibilidade:</strong> depois de <span class="inline-code">"available":</span>, mantenha <span class="inline-code">true</span> para disponível ou <span class="inline-code">false</span> para indisponível. Nome e descrição são textos entre aspas.</p>
+          <p><strong>Preço:</strong> altere o número depois de <span class="inline-code">"price":</span>. Use ponto para centavos (por exemplo, <span class="inline-code">21.8</span> representa R$ 21,80). <strong>Disponibilidade:</strong> depois de <span class="inline-code">"available":</span>, mantenha <span class="inline-code">true</span> para disponível ou <span class="inline-code">false</span> para indisponível. O nome e os textos ficam entre aspas: <span class="inline-code">"summary"</span> é a frase curta do produto e <span class="inline-code">"description"</span> é o texto completo que aparece ao abrir os detalhes.</p>
           <p><strong>Foto:</strong> na coluna esquerda, abra <span class="inline-code">public</span> → <span class="inline-code">assets</span> → <span class="inline-code">chef-dani</span>. Coloque a nova foto nessa pasta. No cadastro do produto, o campo <span class="inline-code">"image":</span> precisa ter o nome exato do arquivo, incluindo <span class="inline-code">.jpg</span> ou <span class="inline-code">.png</span>.</p>
-          <p>Salve com <strong>Command (⌘) + S</strong>. Volte ao navegador da prévia e atualize com <strong>Command (⌘) + R</strong>. Confira o produto e o preço antes de continuar.</p>
+          <p>Salve com <strong>Ctrl + S</strong>. Volte ao navegador da prévia e atualize com <strong>Ctrl + R</strong>. Confira o produto e o preço antes de continuar.</p>
           <p class="tip">Os produtos deste site são mantidos neste projeto. Alterações no InstaDelivery não aparecem automaticamente aqui; é preciso atualizar este arquivo também.</p>
         </div>
       </article>
@@ -180,11 +187,11 @@
         <div class="number">4</div><div>
           <span class="step-label">Só faça isso depois de revisar tudo</span>
           <h2>Enviar a versão aprovada para o site</h2>
-          <p>Esta etapa muda o cardápio que os clientes veem. Antes de continuar, confira na prévia nomes, descrições, preços, fotos e disponibilidade. Quando estiver tudo certo, copie este comando, cole no Terminal e pressione Enter:</p>
+          <p>Esta etapa muda o cardápio que os clientes veem. Antes de continuar, confira na prévia nomes, descrições, preços, fotos e disponibilidade. Quando estiver tudo certo, copie este comando, cole no Git Bash e pressione Enter:</p>
           <div class="codebox"><code>./deploy.command</code><button class="copy" type="button">Copiar</button></div>
-          <p>O Terminal vai mostrar o andamento. Espere até aparecer <span class="inline-code">✓ Deploy concluído.</span> Só então abra o <a href="https://cardapio.chefdaniteles.workers.dev/">site publicado ↗</a> e confirme se a mudança está lá.</p>
+          <p>O Git Bash vai mostrar o andamento. Espere até aparecer <span class="inline-code">✓ Deploy concluído.</span> Só então abra o <a href="https://cardapio.chefdaniteles.workers.dev/">site publicado ↗</a> e confirme se a mudança está lá.</p>
           <p class="plain"><strong>“Build” quer dizer preparar os arquivos do site.</strong> Neste projeto, o comando acima já faz essa preparação e a publicação. Não é necessário rodar outro comando de build.</p>
-          <p class="tip">Se aparecer uma mensagem de erro ou não aparecer “Deploy concluído”, pare aqui: o site pode não ter sido atualizado. Copie a mensagem do Terminal e peça ajuda. Se a mensagem disser que a Cloudflare não está conectada, siga a instrução “conectar à Cloudflare” na etapa 1.</p>
+          <p class="tip">Se aparecer uma mensagem de erro ou não aparecer “Deploy concluído”, pare aqui: o site pode não ter sido atualizado. Copie a mensagem do Git Bash e peça ajuda. Se a mensagem disser que a Cloudflare não está conectada, siga a instrução “conectar à Cloudflare” na etapa 1.</p>
         </div>
       </article>
 
@@ -196,7 +203,7 @@
           <p>Dentro do painel, escolha o período que quer consultar. Os números representam eventos registrados nesse intervalo.</p>
           <details>
             <summary>Esqueceu a senha ou precisa ver os registros técnicos?</summary>
-            <p>A senha pode ser alterada por quem tem acesso administrativo à conta Cloudflare. No Terminal, dentro da pasta do projeto, rode o comando abaixo e digite a nova senha quando solicitado. Ela não aparece na tela enquanto você digita; isso é normal.</p>
+            <p>A senha pode ser alterada por quem tem acesso administrativo à conta Cloudflare. No Git Bash, dentro da pasta do projeto, rode o comando abaixo e digite a nova senha quando solicitado. Ela não aparece na tela enquanto você digita; isso é normal.</p>
             <div class="codebox"><code>npx wrangler secret put ADMIN_PASSWORD</code><button class="copy" type="button">Copiar</button></div>
             <p>Para suporte técnico, os registros recentes podem ser vistos com:</p>
             <div class="codebox"><code>npx wrangler tail cardapio</code><button class="copy" type="button">Copiar</button></div>
@@ -216,7 +223,7 @@ git commit -m "Atualiza produtos do cardápio"
 git push origin main</code><button class="copy" type="button">Copiar</button></div>
           <p><span class="inline-code">git status</span> mostra o que mudou. <span class="inline-code">git add -A</span> seleciona essas mudanças para guardar. <span class="inline-code">git commit</span> registra uma cópia com o resumo escrito entre aspas. <span class="inline-code">git push</span> envia a cópia ao GitHub.</p>
           <p>Neste projeto, enviar ao GitHub pode também iniciar uma publicação automática. Se não tiver certeza de que os arquivos listados em <span class="inline-code">git status</span> são os corretos, não continue; peça ajuda. A publicação manual é feita com <span class="inline-code">./deploy.command</span>, na etapa 4.</p>
-          <p class="tip">Se o Terminal disser “nothing to commit” ou “não há alterações”, não existe mudança nova para guardar. Isso não é um erro.</p>
+          <p class="tip">Se o Git Bash disser “nothing to commit” ou “não há alterações”, não existe mudança nova para guardar. Isso não é um erro.</p>
         </div>
       </article>
     </section>

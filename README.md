@@ -14,3 +14,5 @@ O guia cobre configuração, prévia local, edição de produtos e imagens, publ
 - `./deploy.command` — valida e publica no Worker `cardapio`.
 
 O projeto não requer `npm install` nem `npm run build`; o Wrangler prepara os arquivos durante o deploy. Para detalhes sobre eventos e logs, consulte [OBSERVABILITY.md](OBSERVABILITY.md).
+
+No Windows, execute os comandos pelo **Git Bash**. O tutorial explica como instalar e abrir os programas necessários.
