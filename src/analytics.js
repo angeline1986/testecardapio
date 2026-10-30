@@ -99,6 +99,11 @@ export function analyticsDashboardPage(days) {
     @media(min-width:1440px){.wrap{padding-top:40px}.kpi{padding:22px}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
   </style>
+  <style>
+    .dashboard-grid{grid-template-columns:minmax(0,1fr);gap:20px}.summary-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:20px}.table-panel{padding:0;overflow:hidden}.table-panel>.panel-heading{padding:20px 20px 14px;margin:0;border-bottom:1px solid var(--line)}.panel-caption{display:block;margin-top:4px;font-size:12px}.table-scroll{overflow-x:auto}.product-table{width:100%;border-collapse:collapse;text-align:left;font-size:13px}.product-table th,.product-table td{padding:13px 16px;border-bottom:1px solid #f1f5f9}.product-table th{background:#f8fafc;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}.product-table th:first-child,.product-table td:first-child{padding-left:20px}.product-table td:first-child{min-width:260px;color:#1e293b;font-weight:600;overflow-wrap:anywhere}.product-table th:not(:first-child),.product-table td:not(:first-child){text-align:center;white-space:nowrap}.product-table tbody tr:last-child td{border-bottom:0}.product-table tbody tr:hover{background:#f8fafc}.table-count{font-weight:700}.table-count.conversion{color:var(--indigo)}.table-rate{display:inline-flex;padding:3px 8px;border:1px solid var(--green-line);border-radius:6px;background:var(--green-bg);color:#047857;font-size:12px;font-weight:700}.table-rate.frequency{border-color:#bfdbfe;background:#eff6ff;color:#1d4ed8}.table-empty{text-align:center!important;color:var(--muted)!important;font-weight:400!important;padding:24px!important}
+    @media(min-width:768px){.summary-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.summary-grid .panel{padding:18px}}
+    @media(max-width:600px){.table-panel>.panel-heading{padding:16px}.product-table{min-width:700px}.product-table th,.product-table td{padding:12px}.summary-grid{gap:12px}}
+  </style>
 </head>
 <body>
   <main class="wrap">
@@ -134,25 +139,14 @@ export function analyticsDashboardPage(days) {
     </section>
 
     <div class="dashboard-grid" id="dashboard-grid">
-      <section class="panel">
-        <div class="panel-heading"><h2>Produtos com mais detalhes abertos</h2><span class="panel-caption">Toques ou cliques para ver os detalhes</span></div>
-        <ul class="product-list" id="opened-product-list" aria-live="polite">
-          <li class="skeleton skeleton-row" aria-hidden="true"></li><li class="skeleton skeleton-row" aria-hidden="true"></li>
-          <li class="skeleton skeleton-row" aria-hidden="true"></li><li class="skeleton skeleton-row" aria-hidden="true"></li>
-        </ul>
+      <section class="panel table-panel">
+        <div class="panel-heading"><div><h2>Engajamento e conversão por produto</h2><p class="panel-caption">Comparativo entre quem abriu os detalhes e quem avançou para o InstaDelivery</p></div></div>
+        <div class="table-scroll"><table class="product-table"><thead><tr><th scope="col">Produto</th><th scope="col">Detalhes abertos</th><th scope="col">Cliques InstaDelivery</th><th scope="col">Taxa de avanço</th></tr></thead><tbody id="product-table-body"><tr><td colspan="4"><div class="skeleton skeleton-row" aria-hidden="true"></div></td></tr></tbody></table></div>
       </section>
-      <section class="panel">
-        <div class="panel-heading"><h2>Produtos mais acessados no InstaDelivery</h2><span class="panel-caption">Cliques em “Ver cardápio oficial” dentro dos detalhes</span></div>
-        <p class="panel-note">Este número conta quem saiu do cardápio para abrir o InstaDelivery. Abrir os detalhes do produto, por si só, não entra nesta lista.</p>
-        <ul class="product-list" id="product-list" aria-live="polite">
-          <li class="skeleton skeleton-row" aria-hidden="true"></li><li class="skeleton skeleton-row" aria-hidden="true"></li>
-          <li class="skeleton skeleton-row" aria-hidden="true"></li><li class="skeleton skeleton-row" aria-hidden="true"></li>
-        </ul>
-      </section>
-      <div class="panel-stack side-panels">
-        <section class="panel"><h2>Filtros Mais Utilizados</h2><ul class="filter-list" id="filter-list"><li class="skeleton skeleton-row" aria-hidden="true"></li><li class="skeleton skeleton-row" aria-hidden="true"></li></ul></section>
-        <section class="panel"><h2>Aberturas dos detalhes</h2><p class="panel-note">Total de vezes que alguém abriu a janela de detalhes. As duas formas abaixo somam esse total.</p><ul class="filter-list" id="product-open-list"><li class="skeleton skeleton-row" aria-hidden="true"></li><li class="skeleton skeleton-row" aria-hidden="true"></li></ul></section>
-        <section class="panel"><h2>Origem da Conversão</h2><ul class="origin-list" id="origin-list"><li class="skeleton skeleton-row" aria-hidden="true"></li><li class="skeleton skeleton-row" aria-hidden="true"></li></ul></section>
+      <div class="summary-grid">
+        <section class="panel"><h2>Origem da Conversão</h2><p class="panel-caption">De onde a pessoa clicou para abrir o InstaDelivery</p><ul class="origin-list" id="origin-list"><li class="skeleton skeleton-row" aria-hidden="true"></li><li class="skeleton skeleton-row" aria-hidden="true"></li></ul></section>
+        <section class="panel"><h2>Como acessam os detalhes</h2><p class="panel-caption">Forma usada para abrir o produto</p><ul class="filter-list" id="product-open-list"><li class="skeleton skeleton-row" aria-hidden="true"></li><li class="skeleton skeleton-row" aria-hidden="true"></li></ul></section>
+        <section class="panel"><h2>Filtros mais utilizados</h2><p class="panel-caption">Categorias acionadas no cardápio</p><ul class="filter-list" id="filter-list"><li class="skeleton skeleton-row" aria-hidden="true"></li><li class="skeleton skeleton-row" aria-hidden="true"></li></ul></section>
       </div>
     </div>
     <p class="footnote">Os números mostram interações registradas neste cardápio; cliques no cardápio oficial não confirmam pedidos ou vendas.</p>
@@ -166,8 +160,7 @@ export function analyticsDashboardPage(days) {
     const healthStatus = document.querySelector('#health-status');
     const healthDetail = document.querySelector('#health-detail');
     const periodSubtitle = document.querySelector('#period-subtitle');
-    const productList = document.querySelector('#product-list');
-    const openedProductList = document.querySelector('#opened-product-list');
+    const productTableBody = document.querySelector('#product-table-body');
     const filterList = document.querySelector('#filter-list');
     const productOpenList = document.querySelector('#product-open-list');
     const originList = document.querySelector('#origin-list');
@@ -203,7 +196,14 @@ export function analyticsDashboardPage(days) {
       kpiGrid.setAttribute('aria-busy', 'true');
       kpiGrid.hidden = false;
       kpiGrid.replaceChildren(...Array.from({ length: 4 }, () => element('div', 'skeleton skeleton-card')));
-      productList.replaceChildren(...Array.from({ length: 4 }, () => element('li', 'skeleton skeleton-row')));
+      productTableBody.replaceChildren(...Array.from({ length: 4 }, () => {
+        const row = element('tr');
+        const cell = element('td');
+        cell.colSpan = 4;
+        cell.append(element('div', 'skeleton skeleton-row'));
+        row.append(cell);
+        return row;
+      }));
       filterList.replaceChildren(...Array.from({ length: 3 }, () => element('li', 'skeleton skeleton-row')));
       productOpenList.replaceChildren(...Array.from({ length: 2 }, () => element('li', 'skeleton skeleton-row')));
       originList.replaceChildren(...Array.from({ length: 2 }, () => element('li', 'skeleton skeleton-row')));
@@ -230,28 +230,54 @@ export function analyticsDashboardPage(days) {
       return labels[category] || category.charAt(0).toLocaleUpperCase('pt-BR') + category.slice(1);
     }
 
-    function renderProducts(products, list = productList, emptyMessage = 'Nenhum clique no link oficial dos produtos neste período.') {
-      list.replaceChildren();
-      if (!products.length) {
-        list.append(element('li', 'empty-list', emptyMessage));
+    function renderProductTable(openedProducts, convertedProducts) {
+      productTableBody.replaceChildren();
+      const byId = new Map();
+      const byName = new Map();
+      const keyFor = item => String(item.id || item.name || '');
+      openedProducts.forEach(item => {
+        const key = keyFor(item);
+        const row = { id: key, name: item.name || 'Produto sem nome', opened: Number(item.clicks) || 0, clicks: 0 };
+        byId.set(key, row);
+        byName.set(row.name, row);
+      });
+      convertedProducts.forEach(item => {
+        const key = keyFor(item);
+        const row = byId.get(key) || byName.get(item.name);
+        if (row) row.clicks = Number(item.clicks) || 0;
+        else {
+          const convertedOnly = { id: key, name: item.name || 'Produto sem nome', opened: 0, clicks: Number(item.clicks) || 0 };
+          byId.set(key, convertedOnly);
+        }
+      });
+      const rows = [...byId.values()].sort((a, b) => b.opened - a.opened || b.clicks - a.clicks || a.name.localeCompare(b.name, 'pt-BR'));
+      if (!rows.length) {
+        const row = element('tr');
+        const cell = element('td', 'table-empty', 'Nenhum produto teve os detalhes abertos ou recebeu cliques no InstaDelivery neste período.');
+        cell.colSpan = 4;
+        row.append(cell);
+        productTableBody.append(row);
         return;
       }
-      const maxClicks = Math.max(0, ...products.map(item => Number(item.clicks) || 0));
-      products.forEach(item => {
-        const row = element('li', 'product-row');
-        const info = element('div', 'product-info');
-        const name = element('p', 'product-name', item.name || 'Produto sem nome');
-        name.title = item.name || 'Produto sem nome';
-        name.setAttribute('aria-label', item.name || 'Produto sem nome');
-        const track = element('div', 'progress-track');
-        track.setAttribute('aria-hidden', 'true');
-        const fill = element('div', 'progress-fill');
-        const clicks = Math.max(0, Number(item.clicks) || 0);
-        fill.style.width = (maxClicks > 0 ? Math.min(100, clicks / maxClicks * 100) : 0) + '%';
-        track.append(fill);
-        info.append(name, track);
-        row.append(info, element('span', 'count-badge', formatCount(clicks) + (clicks === 1 ? ' clique' : ' cliques')));
-        list.append(row);
+      rows.forEach(item => {
+        const row = element('tr');
+        const name = element('td', '', item.name);
+        name.title = item.name;
+        const opened = element('td', 'table-count', formatCount(item.opened));
+        const clicks = element('td', 'table-count conversion', formatCount(item.clicks));
+        const rateCell = element('td');
+        let rateText = '—';
+        let rateClass = 'table-rate';
+        if (item.opened > 0) {
+          const rate = item.clicks / item.opened;
+          rateText = rate > 1 ? rate.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + 'x' : formatPercent(rate * 100);
+          if (rate > 1) rateClass += ' frequency';
+        }
+        const rate = element('span', rateClass, rateText);
+        if (item.opened > 0 && item.clicks / item.opened > 1) rate.title = 'Média de cliques no InstaDelivery por abertura dos detalhes';
+        rateCell.append(rate);
+        row.append(name, opened, clicks, rateCell);
+        productTableBody.append(row);
       });
     }
 
@@ -305,10 +331,18 @@ export function analyticsDashboardPage(days) {
 
     function renderDashboard(data) {
       const summary = data.summary;
+      const engagementFrequency = summary.menus_loaded > 0 ? summary.products_opened / summary.menus_loaded : 0;
+      const engagementBadge = summary.menus_loaded > 0 && engagementFrequency > 1
+        ? engagementFrequency.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + 'x / carregamento'
+        : formatPercent(summary.engagement_rate) + ' engaj.';
+      const conversionFrequency = summary.menus_loaded > 0 ? summary.official_menu_clicks / summary.menus_loaded : 0;
+      const conversionBadge = summary.menus_loaded > 0 && conversionFrequency > 1
+        ? conversionFrequency.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + 'x / carregamento'
+        : formatPercent(summary.conversion_rate) + ' conv.';
       kpiGrid.replaceChildren(
         metricCard('Acessos totais', summary.menus_loaded, '', 'Cardápios carregados', {}),
-        metricCard('Aberturas dos detalhes', summary.products_opened, formatPercent(summary.engagement_rate) + ' engaj.', 'Vezes que a janela de um produto foi aberta', {}),
-        metricCard('Intenção de compra', summary.official_menu_clicks, formatPercent(summary.conversion_rate) + ' conv.', 'Cliques no cardápio oficial', { badgeClass: 'blue' }),
+        metricCard('Aberturas dos detalhes', summary.products_opened, engagementBadge, 'Vezes que a janela de um produto foi aberta', {}),
+        metricCard('Cliques no InstaDelivery', summary.official_menu_clicks, conversionBadge, 'Saídas para o cardápio oficial', { badgeClass: 'blue' }),
         metricCard('Saúde do catálogo', summary.catalog_errors, summary.catalog_errors === 0 ? '100% funcional' : summary.catalog_errors + (summary.catalog_errors === 1 ? ' incidente' : ' incidentes'), summary.catalog_errors === 0 ? 'Zero falhas de renderização' : 'Falhas registradas no período', { good: summary.catalog_errors === 0, badgeClass: summary.catalog_errors === 0 ? '' : 'bad' })
       );
       kpiGrid.setAttribute('aria-busy', 'false');
@@ -316,8 +350,7 @@ export function analyticsDashboardPage(days) {
       healthStatus.textContent = summary.catalog_errors > 0 ? '● ' + summary.catalog_errors + (summary.catalog_errors === 1 ? ' incidente' : ' incidentes') : '● Sistema Estável';
       healthStatus.removeAttribute('aria-label');
       healthDetail.textContent = summary.catalog_errors + (summary.catalog_errors === 1 ? ' erro no período' : ' erros no período');
-      renderProducts(data.top_converted_products || []);
-      renderProducts(data.top_opened_products || [], openedProductList, 'Nenhum detalhe de produto foi aberto neste período.');
+      renderProductTable(data.top_opened_products || [], data.top_converted_products || []);
       renderFilters(data.filters_used || []);
       renderProductOpenSources(summary);
       renderOrigins(data.conversion_origins || []);
