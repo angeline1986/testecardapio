@@ -92,7 +92,7 @@
     <section class="hero">
       <div class="eyebrow">Guia de atualização do cardápio</div>
       <h1>Atualize, confira e publique com tranquilidade.</h1>
-      <p class="intro">Este guia acompanha o processo completo: abrir os arquivos do projeto, ajustar o cardápio, ver como ficou e enviar a versão aprovada para o site.</p>
+      <p class="intro">Siga as etapas na ordem. Você vai abrir a pasta do projeto, alterar o cardápio, conferir a mudança numa cópia de teste e só então atualizar o site que os clientes acessam.</p>
       <div class="hero-actions">
         <a class="button" href="#preparar">Ver as etapas ↓</a>
         <a class="button secondary" href="/analytics">Abrir estatísticas ↗</a>
@@ -101,31 +101,46 @@
 
     <aside class="notice">
       <div class="notice-icon" aria-hidden="true">✦</div>
-      <div><strong>O fluxo é simples: editar → conferir → publicar.</strong><p>Não há uma etapa de “build” separada. O próprio comando de publicação prepara os arquivos e envia o site.</p></div>
+      <div><strong>Primeiro confira. Depois publique.</strong><p>A prévia é uma cópia de teste no seu computador. O site público só muda quando você executa a etapa “Publicar”. Não há um comando separado para “build”.</p></div>
     </aside>
 
     <nav class="contents" aria-label="Nesta página">
       <a href="#preparar">1. Abrir o projeto</a><a href="#rodar">2. Conferir a prévia</a><a href="#editar">3. Fazer alterações</a><a href="#publicar">4. Publicar</a><a href="#acompanhar">5. Estatísticas</a><a href="#git">6. Guardar alterações</a>
     </nav>
 
+    <aside class="notice">
+      <div class="notice-icon" aria-hidden="true">⌘</div>
+      <div><strong>Como usar os comandos deste guia</strong><p>Cada caixa escura contém um comando. Clique em <strong>Copiar</strong>, clique na janela do Terminal, cole com <strong>Command (⌘) + V</strong> e pressione <strong>Enter</strong>. Espere o comando terminar antes de colar o próximo. Não cole comandos na barra de endereço do navegador.</p></div>
+    </aside>
+
     <section class="steps">
       <article class="step" id="preparar">
         <div class="number">1</div><div>
-          <span class="step-label">Uma vez por computador</span>
-          <h2>Abrir o projeto e preparar o ambiente</h2>
-          <p>O projeto é a pasta com os arquivos do cardápio. Abra o aplicativo <strong>Terminal</strong> (no Mac, pressione Command + Espaço, digite “Terminal” e pressione Enter).</p>
-          <p>Se a pasta do projeto já está no computador, digite <span class="inline-code">cd </span> no Terminal, arraste a pasta do projeto para a janela e pressione Enter. Depois, inicie a verificação:</p>
+          <span class="step-label">Faça esta preparação uma vez em cada computador</span>
+          <h2>Abrir a pasta do projeto</h2>
+          <p>O <strong>Terminal</strong> é um aplicativo do Mac onde você cola comandos curtos para executar tarefas. Para abri-lo, pressione <strong>Command (⌘) + Espaço</strong>, escreva <strong>Terminal</strong> e pressione <strong>Enter</strong>.</p>
+          <p>Se este projeto já está no computador e dentro da pasta <strong>Documentos → TI → Projetos → testecardapio</strong>, clique em <strong>Copiar</strong> neste comando. Depois clique na janela do Terminal, cole o comando com <strong>Command (⌘) + V</strong> e pressione <strong>Enter</strong>:</p>
+          <div class="codebox"><code>cd "$HOME/Documents/TI/Projetos/testecardapio"</code><button class="copy" type="button">Copiar</button></div>
+          <p>Esse comando só informa ao Terminal qual pasta usar. Ele não altera o cardápio.</p>
+          <p><strong>Agora verifique se o computador está pronto.</strong> Copie, cole no Terminal e pressione Enter:</p>
           <div class="codebox"><code>./setup_cardapio.command</code><button class="copy" type="button">Copiar</button></div>
-          <p>O assistente verifica se o computador tem os programas necessários e explica se faltar algo. Para abrir a prévia, também é necessário ter Python 3 instalado. Siga as instruções que aparecerem na tela.</p>
+          <p>O Terminal vai mostrar uma lista de itens com ✓. Se aparecer uma linha com ✗, a ferramenta indicada está faltando; peça ajuda para instalá-la antes de continuar. A prévia também precisa do Python 3.</p>
           <details>
-            <summary>É a primeira vez neste computador?</summary>
-            <p>Baixe uma cópia do projeto com estes comandos. Depois, abra a pasta criada chamada <span class="inline-code">testecardapio</span> no Terminal e rode o assistente acima.</p>
-            <div class="codebox"><code>git clone https://github.com/angeline1986/testecardapio.git
-cd testecardapio</code><button class="copy" type="button">Copiar</button></div>
+            <summary>O assistente fez uma pergunta e não sei o que responder</summary>
+            <p>Se perguntar <span class="inline-code">Configurar senha administrativa agora? [s/N]</span>, responda <strong>N</strong> se você não for a pessoa responsável pela senha do painel. Se for responsável, responda <strong>s</strong> e digite a nova senha quando solicitado; os caracteres não aparecem enquanto você digita, e isso é normal.</p>
+            <p>Se perguntar <span class="inline-code">Executar validação/publicação do cardápio agora? [s/N]</span>, responda <strong>N</strong> por enquanto. A publicação tem uma etapa própria mais abaixo, depois da revisão da prévia.</p>
+            <p>Se informar que falta um segredo chamado <span class="inline-code">SESSION_SECRET</span>, não tente adivinhar um valor: peça ajuda à pessoa responsável pela conta Cloudflare antes de publicar.</p>
           </details>
           <details>
-            <summary>O assistente pediu para conectar à Cloudflare?</summary>
-            <p>Esse acesso é necessário para publicar o site. Rode o comando abaixo; uma página da Cloudflare abrirá para você entrar e autorizar a conexão. Depois, volte ao Terminal.</p>
+            <summary>Não tem a pasta do projeto no computador?</summary>
+            <p>Use esta opção apenas se ainda não baixou o projeto neste computador. No Terminal, copie e execute um comando por vez, na ordem abaixo. O segundo comando entra na pasta que acabou de ser criada.</p>
+            <div class="codebox"><code>git clone https://github.com/angeline1986/testecardapio.git</code><button class="copy" type="button">Copiar</button></div>
+            <div class="codebox"><code>cd testecardapio</code><button class="copy" type="button">Copiar</button></div>
+            <p>Depois, execute <span class="inline-code">./setup_cardapio.command</span>, mostrado acima. Se o primeiro comando disser que <span class="inline-code">git</span> não foi encontrado, o Git precisa ser instalado neste computador.</p>
+          </details>
+          <details>
+            <summary>O Terminal diz que não está conectado à Cloudflare?</summary>
+            <p>A Cloudflare é o serviço onde o site está publicado. Copie e execute o comando abaixo. Uma página abrirá no navegador: entre na conta Cloudflare responsável pelo cardápio e autorize o acesso. Depois volte ao Terminal e execute novamente <span class="inline-code">./setup_cardapio.command</span>.</p>
             <div class="codebox"><code>npx wrangler login</code><button class="copy" type="button">Copiar</button></div>
           </details>
         </div>
@@ -133,49 +148,52 @@ cd testecardapio</code><button class="copy" type="button">Copiar</button></div>
 
       <article class="step" id="rodar">
         <div class="number">2</div><div>
-          <span class="step-label">Antes de publicar</span>
+          <span class="step-label">Faça isso sempre que for revisar mudanças</span>
           <h2>Conferir uma prévia do cardápio</h2>
-          <p>Com o Terminal aberto na pasta do projeto, rode:</p>
+          <p>Confirme que o Terminal ainda está usando a pasta <span class="inline-code">testecardapio</span>. Copie o comando, cole no Terminal e pressione Enter:</p>
           <div class="codebox"><code>./preview.command</code><button class="copy" type="button">Copiar</button></div>
-          <p>O navegador abrirá o cardápio no seu computador. Essa versão serve para revisão e só você consegue acessá-la. Deixe a janela do Terminal aberta durante a conferência.</p>
-          <p class="tip"><strong>Para encerrar:</strong> volte ao Terminal e pressione Control + C. A prévia não altera nem publica o site.</p>
+          <p>O navegador deve abrir uma página com o cardápio. O endereço começa com <span class="inline-code">http://127.0.0.1</span>; isso significa que você está vendo a cópia de teste no seu computador. Se o navegador não abrir sozinho, copie o endereço que apareceu no Terminal e cole-o na barra de endereço do navegador.</p>
+          <p>Depois de editar um arquivo, volte para essa página e atualize-a com <strong>Command (⌘) + R</strong> para ver a mudança. Mantenha o Terminal aberto enquanto estiver usando a prévia.</p>
+          <p class="tip"><strong>Para fechar a prévia:</strong> clique na janela do Terminal e pressione <strong>Control + C</strong>. Isso fecha só a cópia de teste; não publica nem apaga nada.</p>
         </div>
       </article>
 
       <article class="step" id="editar">
         <div class="number">3</div><div>
-          <span class="step-label">Faça uma alteração por vez</span>
+          <span class="step-label">Salve o arquivo e confira a prévia depois de cada mudança</span>
           <h2>Atualizar produtos, fotos e aparência</h2>
-          <p>Abra a pasta do projeto em um editor de texto ou de código (por exemplo, Visual Studio Code). Os arquivos mais usados são:</p>
+          <p>Use um editor de código, como o Visual Studio Code. No VS Code, escolha <strong>File → Open Folder</strong> (Arquivo → Abrir Pasta), selecione a pasta <span class="inline-code">testecardapio</span> e clique em <strong>Open</strong> (Abrir). Os arquivos do projeto aparecem na coluna esquerda. Para atualizar um produto:</p>
           <ul>
-            <li><strong>Produtos e preços:</strong> <span class="inline-code">public/products.json</span>.</li>
-            <li><strong>Fotos:</strong> <span class="inline-code">public/assets/chef-dani/</span>. Ao adicionar uma foto nova, atualize também o nome do arquivo no cadastro do produto.</li>
-            <li><strong>Página e visual:</strong> <span class="inline-code">public/index.html</span> (conteúdo), <span class="inline-code">public/style.css</span> (aparência) e <span class="inline-code">public/script.js</span> (interações).</li>
+            <li>Na coluna esquerda, clique na seta ao lado de <span class="inline-code">public</span> e depois em <span class="inline-code">products.json</span>.</li>
+            <li>Pressione <strong>Command (⌘) + F</strong>, escreva o nome atual do produto e pressione Enter para encontrá-lo.</li>
+            <li>Altere apenas o texto ou número entre aspas indicado abaixo. Não apague aspas, vírgulas ou chaves: elas são necessárias para o arquivo funcionar.</li>
+            <li><strong>Textos e aparência da página:</strong> ficam em <span class="inline-code">public/index.html</span> e <span class="inline-code">public/style.css</span>. Essas partes não precisam ser alteradas para atualizar um preço ou uma foto.</li>
           </ul>
-          <p>Salve o arquivo, atualize a prévia no navegador e confira o resultado em computador e celular. Antes de publicar, confirme especialmente os nomes, preços, fotos e disponibilidade.</p>
-          <p class="tip">O cardápio deste site é atualizado separadamente. Mudanças feitas no InstaDelivery não aparecem aqui sozinhas.</p>
+          <p><strong>Preço:</strong> altere o número depois de <span class="inline-code">"price":</span>. Use ponto para centavos (por exemplo, <span class="inline-code">21.8</span> representa R$ 21,80). <strong>Disponibilidade:</strong> depois de <span class="inline-code">"available":</span>, mantenha <span class="inline-code">true</span> para disponível ou <span class="inline-code">false</span> para indisponível. Nome e descrição são textos entre aspas.</p>
+          <p><strong>Foto:</strong> na coluna esquerda, abra <span class="inline-code">public</span> → <span class="inline-code">assets</span> → <span class="inline-code">chef-dani</span>. Coloque a nova foto nessa pasta. No cadastro do produto, o campo <span class="inline-code">"image":</span> precisa ter o nome exato do arquivo, incluindo <span class="inline-code">.jpg</span> ou <span class="inline-code">.png</span>.</p>
+          <p>Salve com <strong>Command (⌘) + S</strong>. Volte ao navegador da prévia e atualize com <strong>Command (⌘) + R</strong>. Confira o produto e o preço antes de continuar.</p>
+          <p class="tip">Os produtos deste site são mantidos neste projeto. Alterações no InstaDelivery não aparecem automaticamente aqui; é preciso atualizar este arquivo também.</p>
         </div>
       </article>
 
       <article class="step" id="publicar">
         <div class="number">4</div><div>
-          <span class="step-label">Esta etapa altera o site público</span>
+          <span class="step-label">Só faça isso depois de revisar tudo</span>
           <h2>Enviar a versão aprovada para o site</h2>
-          <p>Quando terminar a revisão, volte ao Terminal e rode:</p>
+          <p>Esta etapa muda o cardápio que os clientes veem. Antes de continuar, confira na prévia nomes, descrições, preços, fotos e disponibilidade. Quando estiver tudo certo, copie este comando, cole no Terminal e pressione Enter:</p>
           <div class="codebox"><code>./deploy.command</code><button class="copy" type="button">Copiar</button></div>
-          <p>O comando confere os arquivos e a conexão com a Cloudflare antes de publicar. Quando terminar, abra o site e confirme que a atualização apareceu: <a href="https://cardapio.chefdaniteles.workers.dev/">cardapio.chefdaniteles.workers.dev ↗</a></p>
-          <p class="plain"><strong>Sobre “build”:</strong> não precisa procurar outro botão nem rodar um comando separado. O script cuida da preparação e do envio.</p>
-          <p class="tip">Se o Terminal mostrar uma mensagem de erro, o site não foi atualizado por esse comando. Leia a mensagem: ela costuma indicar o próximo passo. Se disser que falta entrar na Cloudflare, rode <span class="inline-code">npx wrangler login</span> e tente de novo.</p>
+          <p>O Terminal vai mostrar o andamento. Espere até aparecer <span class="inline-code">✓ Deploy concluído.</span> Só então abra o <a href="https://cardapio.chefdaniteles.workers.dev/">site publicado ↗</a> e confirme se a mudança está lá.</p>
+          <p class="plain"><strong>“Build” quer dizer preparar os arquivos do site.</strong> Neste projeto, o comando acima já faz essa preparação e a publicação. Não é necessário rodar outro comando de build.</p>
+          <p class="tip">Se aparecer uma mensagem de erro ou não aparecer “Deploy concluído”, pare aqui: o site pode não ter sido atualizado. Copie a mensagem do Terminal e peça ajuda. Se a mensagem disser que a Cloudflare não está conectada, siga a instrução “conectar à Cloudflare” na etapa 1.</p>
         </div>
       </article>
 
       <article class="step" id="acompanhar">
         <div class="number">5</div><div>
-          <span class="step-label">Acesso administrativo</span>
+          <span class="step-label">Opcional</span>
           <h2>Consultar as estatísticas</h2>
-          <p>Abra o painel e entre com a senha administrativa:</p>
-          <div class="linkrow"><a href="/analytics">Abrir o painel de estatísticas ↗</a></div>
-          <p>O painel reúne visitas e ações feitas no cardápio. Escolha o período disponível para comparar os dados.</p>
+          <p>Para ver quantas pessoas acessaram o cardápio e quais ações fizeram, abra <a href="/analytics">o painel de estatísticas ↗</a> e entre com a senha administrativa. Se não tiver essa senha, peça-a à pessoa responsável pelo site.</p>
+          <p>Dentro do painel, escolha o período que quer consultar. Os números representam eventos registrados nesse intervalo.</p>
           <details>
             <summary>Esqueceu a senha ou precisa ver os registros técnicos?</summary>
             <p>A senha pode ser alterada por quem tem acesso administrativo à conta Cloudflare. No Terminal, dentro da pasta do projeto, rode o comando abaixo e digite a nova senha quando solicitado. Ela não aparece na tela enquanto você digita; isso é normal.</p>
@@ -189,15 +207,16 @@ cd testecardapio</code><button class="copy" type="button">Copiar</button></div>
 
       <article class="step" id="git">
         <div class="number">6</div><div>
-          <span class="step-label">Guardar uma cópia das alterações</span>
+          <span class="step-label">Para quem já usa GitHub</span>
           <h2>Sincronizar com o GitHub</h2>
-          <p>O GitHub guarda o histórico do projeto e permite recuperar alterações. Depois de conferir tudo, rode os comandos abaixo. Troque a frase entre aspas por um resumo, como <span class="inline-code">Atualiza preços dos bolos</span>:</p>
+          <p>O GitHub guarda uma cópia do projeto e seu histórico. Esta etapa é diferente de publicar o site. Se você já usa GitHub neste projeto, confira os arquivos alterados e depois envie as mudanças:</p>
           <div class="codebox"><code>git status
 git add -A
 git commit -m "Atualiza produtos do cardápio"
 git push origin main</code><button class="copy" type="button">Copiar</button></div>
-          <p>O primeiro comando mostra quais arquivos mudaram. O último envia as alterações ao GitHub. Neste projeto, isso pode iniciar uma publicação automática; o comando <span class="inline-code">./deploy.command</span> é a forma manual de publicar.</p>
-          <p class="tip">Se o Terminal disser que não há alterações para registrar, tudo bem: não há mudanças novas para sincronizar.</p>
+          <p><span class="inline-code">git status</span> mostra o que mudou. <span class="inline-code">git add -A</span> seleciona essas mudanças para guardar. <span class="inline-code">git commit</span> registra uma cópia com o resumo escrito entre aspas. <span class="inline-code">git push</span> envia a cópia ao GitHub.</p>
+          <p>Neste projeto, enviar ao GitHub pode também iniciar uma publicação automática. Se não tiver certeza de que os arquivos listados em <span class="inline-code">git status</span> são os corretos, não continue; peça ajuda. A publicação manual é feita com <span class="inline-code">./deploy.command</span>, na etapa 4.</p>
+          <p class="tip">Se o Terminal disser “nothing to commit” ou “não há alterações”, não existe mudança nova para guardar. Isso não é um erro.</p>
         </div>
       </article>
     </section>
