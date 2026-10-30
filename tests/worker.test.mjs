@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../src/worker.js';
+import { loadAnalyticsDashboard } from '../src/analytics.js';
 
 const origin = 'https://cardapio.chefdaniteles.workers.dev';
 function environment() {
@@ -15,15 +16,23 @@ function environment() {
       ANALYTICS: { writeDataPoint: point => points.push(point) },
       ANALYTICS_SQL: { query: async request => {
         queries.push(request);
-        if (request.query.includes('AS event_name')) return { data: [{ event_name: 'product_open', total: 4 }, { event_name: 'official_menu_click', total: 2 }] };
-        if (request.query.includes('AS product')) return { data: [
-          { product: '<script>alert(1)</script>', open_source: '', total: 2 },
-          { product: 'Torta', open_source: 'product_card', total: 1 },
-          { product: 'Torta', open_source: 'details_button', total: 1 }
+        if (request.query.includes('AS event_name')) return { data: [
+          { event_name: 'menu_view', total: 20 },
+          { event_name: 'product_open', total: 18 },
+          { event_name: 'official_menu_click', total: 9 },
+          { event_name: 'catalog_error', total: 0 },
+          { event_name: 'filter_click', total: 17 }
         ] };
-        if (request.query.includes('AS category_filter')) return { data: [{ category_filter: 'doces', total: 1 }] };
-        if (request.query.includes('AS modal_product')) return { data: [{ modal_product: 'Torta', total: 1 }] };
-        return { data: [{ click_source: 'product_modal', total: 1 }] };
+        if (request.query.includes('AS category')) return { data: [{ category: 'doces', total: 4 }, { category: 'promocoes', total: 2 }] };
+        if (request.query.includes('AS click_source')) return { data: [
+          { click_source: 'product_modal', total: 8 },
+          { click_source: 'closing_banner', total: 1 }
+        ] };
+        if (request.query.includes('AS product_id')) return { data: [
+          { product_id: '42', product_name: 'Cocada Cremosa (Sem Açúcar & Sem Lactose) - 130ml', total: 2 },
+          { product_id: '43', product_name: 'Torta', total: 1 }
+        ] };
+        return { data: [{ open_source: 'product_card', total: 6 }, { open_source: 'details_button', total: 12 }] };
       } },
       ASSETS: { fetch: () => new Response('asset') }
     }
@@ -67,7 +76,7 @@ test('rejects unsupported events', async () => {
   assert.equal(points.length, 0);
 });
 
-test('dashboard requires a session, queries a bounded period, and escapes product names', async () => {
+test('dashboard shell and data API require a session and return metrics for the selected period', async () => {
   const { env, queries } = environment();
   const anonymous = await worker.fetch(new Request(origin + '/analytics'), env);
   assert.match(await anonymous.text(), /Senha administrativa/);
@@ -83,18 +92,74 @@ test('dashboard requires a session, queries a bounded period, and escapes produc
   }), env);
   const html = await dashboard.text();
   assert.equal(dashboard.status, 200);
-  assert.match(html, /últimos 30 dias/);
-  assert.match(html, /&lt;script&gt;alert\(1\)&lt;\/script&gt;/);
-  assert.doesNotMatch(html, /<script>alert/);
-  assert.match(html, /Interações por produto/);
-  assert.match(html, /Produtos abertos/);
+  assert.match(html, /Performance do Cardápio/);
+  assert.match(html, /data-days="30"/);
+  assert.match(html, /skeleton-card/);
+  assert.match(html, /Nenhuma interação registrada neste período/);
+  assert.match(html, /Interação com produtos/);
   assert.match(html, /Cliques no produto/);
-  assert.match(html, />1<\/strong><span>Cliques no produto/);
-  assert.match(html, />3<\/strong><span>Cliques em Detalhes/);
-  assert.match(html, /Cliques no link oficial dentro de Detalhes/);
-  assert.match(html, /Torta/);
+  assert.match(html, /Cliques em Detalhes/);
+  assert.match(html, /grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+  assert.match(html, /@media\(min-width:768px\).*grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
+  assert.match(html, /@media\(max-width:1023px\)/);
+  assert.match(html, /@media\(min-width:1440px\)/);
+  assert.match(html, /text-overflow:ellipsis/);
+  assert.equal(queries.length, 0);
+
+  const anonymousApi = await worker.fetch(new Request(origin + '/analytics/api/dashboard?dias=30'), env);
+  assert.equal(anonymousApi.status, 401);
+  assert.equal(queries.length, 0);
+
+  const apiResponse = await worker.fetch(new Request(origin + '/analytics/api/dashboard?dias=30', {
+    headers: { Cookie: cookie }
+  }), env);
+  const data = await apiResponse.json();
+  assert.equal(apiResponse.status, 200);
+  assert.equal(data.menu_id, 'chef-dani-teles');
+  assert.equal(data.menu_name, 'Chef Dani Teles');
+  assert.equal(data.period, '30d');
+  assert.equal(data.summary.menus_loaded, 20);
+  assert.equal(data.summary.products_opened, 18);
+  assert.equal(data.summary.product_card_clicks, 6);
+  assert.equal(data.summary.details_button_clicks, 12);
+  assert.equal(data.summary.official_menu_clicks, 9);
+  assert.equal(data.summary.catalog_errors, 0);
+  assert.equal(data.summary.engagement_rate, 90);
+  assert.equal(data.summary.conversion_rate, 45);
+  assert.equal(data.total_events, 64);
+  assert.equal(data.top_converted_products[0].name, 'Cocada Cremosa (Sem Açúcar & Sem Lactose) - 130ml');
+  assert.equal(data.top_converted_products[0].clicks, 2);
+  assert.deepEqual(data.filters_used[0], { category: 'doces', count: 4 });
+  assert.deepEqual(data.conversion_origins[0], { origin: 'Detalhes do produto', clicks: 8, percentage: 88.9 });
+  assert.deepEqual(data.conversion_origins[1], { origin: 'Banner final', clicks: 1, percentage: 11.1 });
   assert.equal(queries.length, 5);
   assert.ok(queries.every(({ query, params }) => query.includes('timestamp >= $start') && params.start));
-  assert.ok(queries.some(({ query }) => query.includes('GROUP BY blob2, blob8')));
+  assert.ok(queries.some(({ query }) => query.includes('GROUP BY blob7, blob2')));
   assert.ok(queries.some(({ query }) => query.includes("blob1 = 'official_menu_click' AND blob8 = 'product_modal'")));
+});
+
+test('conversion rates return zero when the period has no menu loads', async () => {
+  const { env } = environment();
+  env.ANALYTICS_SQL.query = async request => {
+    if (request.query.includes('AS event_name')) return { data: [
+      { event_name: 'product_open', total: 3 },
+      { event_name: 'official_menu_click', total: 2 }
+    ] };
+    return { data: [] };
+  };
+  const data = await loadAnalyticsDashboard(env, 1);
+  assert.equal(data.summary.menus_loaded, 0);
+  assert.equal(data.summary.engagement_rate, 0);
+  assert.equal(data.summary.conversion_rate, 0);
+});
+
+test('dashboard data reports an empty period when no relevant events exist', async () => {
+  const { env } = environment();
+  env.ANALYTICS_SQL.query = async () => ({ data: [] });
+  const data = await loadAnalyticsDashboard(env, 7);
+  assert.equal(data.total_events, 0);
+  assert.equal(data.summary.menus_loaded, 0);
+  assert.deepEqual(data.top_converted_products, []);
+  assert.deepEqual(data.filters_used, []);
+  assert.deepEqual(data.conversion_origins, []);
 });
