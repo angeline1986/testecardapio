@@ -51,7 +51,7 @@ function escapeHtml(value) {
 const eventLabels = {
   menu_view: "Cardápios carregados",
   filter_click: "Filtros usados",
-  product_open: "Cliques em Detalhes",
+  product_open: "Produtos abertos",
   product_close: "Detalhes fechados",
   official_menu_click: "Cliques no cardápio oficial",
   catalog_error: "Erros ao carregar produtos",
@@ -70,16 +70,16 @@ async function protectedPage(env, url) {
   const days = [1, 7, 30].includes(Number(url.searchParams.get("dias"))) ? Number(url.searchParams.get("dias")) : 7;
   const start = new Date(Date.now() - days * 86400000).toISOString();
   const dataset = "events.analyticsEngine.cardapio_events";
-  let events = [], products = [], filters = [], clickSources = [], productLinks = [], queryError = false;
+  let events = [], productInteractions = [], filters = [], clickSources = [], productLinks = [], queryError = false;
   try {
     const queries = [
       `SELECT blob1 AS event_name, COUNT(*) AS total FROM ${dataset} WHERE timestamp >= $start GROUP BY blob1 ORDER BY total DESC LIMIT 20`,
-      `SELECT blob2 AS product, COUNT(*) AS total FROM ${dataset} WHERE timestamp >= $start AND blob1 = 'product_open' AND blob2 != '' GROUP BY blob2 ORDER BY total DESC LIMIT 20`,
+      `SELECT blob2 AS product, blob8 AS open_source, COUNT(*) AS total FROM ${dataset} WHERE timestamp >= $start AND blob1 = 'product_open' AND blob2 != '' GROUP BY blob2, blob8 ORDER BY total DESC LIMIT 100`,
       `SELECT blob4 AS category_filter, COUNT(*) AS total FROM ${dataset} WHERE timestamp >= $start AND blob1 = 'filter_click' GROUP BY blob4 ORDER BY total DESC LIMIT 10`,
       `SELECT blob8 AS click_source, COUNT(*) AS total FROM ${dataset} WHERE timestamp >= $start AND blob1 = 'official_menu_click' GROUP BY blob8 ORDER BY total DESC LIMIT 10`,
       `SELECT blob2 AS modal_product, COUNT(*) AS total FROM ${dataset} WHERE timestamp >= $start AND blob1 = 'official_menu_click' AND blob8 = 'product_modal' AND blob2 != '' GROUP BY blob2 ORDER BY total DESC LIMIT 20`
     ];
-    [events, products, filters, clickSources, productLinks] = await Promise.all(queries.map(async query => (await env.ANALYTICS_SQL.query({query, params:{start}})).data || []));
+    [events, productInteractions, filters, clickSources, productLinks] = await Promise.all(queries.map(async query => (await env.ANALYTICS_SQL.query({query, params:{start}})).data || []));
   } catch (error) {
     console.error(JSON.stringify({event:"analytics_query_error", message:safeText(error.message)}));
     queryError = true;
@@ -87,12 +87,29 @@ async function protectedPage(env, url) {
   const totals = Object.fromEntries(events.map(row => [row.event_name, safeNumber(row.total)]));
   const formatter = new Intl.NumberFormat("pt-BR");
   const count = event => formatter.format(totals[event] || 0);
+  const productCounts = new Map();
+  let cardClickCount = 0;
+  let detailsClickCount = 0;
+  for (const row of productInteractions) {
+    const amount = safeNumber(row.total);
+    if (row.open_source !== "product_card" && row.open_source !== "details_button" && row.open_source !== "") continue;
+    const counts = productCounts.get(row.product) || {card:0, details:0};
+    if (row.open_source === "product_card") {
+      counts.card += amount;
+      cardClickCount += amount;
+    } else {
+      counts.details += amount;
+      detailsClickCount += amount;
+    }
+    productCounts.set(row.product, counts);
+  }
+  const productRows = [...productCounts].sort((a,b) => (b[1].card+b[1].details)-(a[1].card+a[1].details)).map(([product, counts]) => [product,formatter.format(counts.card),formatter.format(counts.details)]);
   const modalLinkCount = formatter.format(safeNumber(clickSources.find(row => row.click_source === "product_modal")?.total));
   const metric = (label, value) => `<div class="metric"><strong>${value}</strong><span>${label}</span></div>`;
   const tabs = [1,7,30].map(value => `<a href="/analytics?dias=${value}"${days===value?' aria-current="page"':''}>${value} ${value===1?'dia':'dias'}</a>`).join("");
   const content = queryError
     ? '<p class="error">Não foi possível consultar os eventos agora. Confira o Analytics SQL e os logs do Worker na Cloudflare.</p>'
-    : `<div class="metrics">${metric("Cardápios carregados",count("menu_view"))}${metric("Cliques em Detalhes",count("product_open"))}${metric("Cliques no link dentro de Detalhes",modalLinkCount)}${metric("Cliques no cardápio oficial",count("official_menu_click"))}${metric("Erros de catálogo",count("catalog_error"))}</div><section><h2>Cliques em Detalhes por produto</h2>${table(["Produto","Cliques"],products.map(row => [row.product,formatter.format(safeNumber(row.total))]))}</section><section><h2>Cliques no link oficial dentro de Detalhes</h2><p>Produtos com pelo menos um clique no link da janela de detalhes.</p>${table(["Produto","Cliques"],productLinks.map(row => [row.modal_product,formatter.format(safeNumber(row.total))]))}</section><section><h2>Filtros usados</h2>${table(["Categoria","Cliques"],filters.map(row => [row.category_filter || "Todos",formatter.format(safeNumber(row.total))]))}</section><section><h2>Origem dos cliques no cardápio oficial</h2>${table(["Origem","Cliques"],clickSources.map(row => [({menu_intro:"Apresentação do cardápio",closing_banner:"Banner final",product_modal:"Detalhes do produto"})[row.click_source] || row.click_source || "Não informada",formatter.format(safeNumber(row.total))]))}</section><section><h2>Todos os eventos</h2>${table(["Evento","Total"],events.map(row => [eventLabels[row.event_name] || row.event_name,formatter.format(safeNumber(row.total))]))}</section>`;
+    : `<div class="metrics">${metric("Cardápios carregados",count("menu_view"))}${metric("Produtos abertos",count("product_open"))}${metric("Cliques no produto",formatter.format(cardClickCount))}${metric("Cliques em Detalhes",formatter.format(detailsClickCount))}${metric("Cliques no link dentro de Detalhes",modalLinkCount)}${metric("Cliques no cardápio oficial",count("official_menu_click"))}${metric("Erros de catálogo",count("catalog_error"))}</div><section><h2>Interações por produto</h2><p>Cliques no cartão abrem o produto. A coluna Detalhes inclui os cliques registrados antes desta separação.</p>${table(["Produto","Clique no produto","Detalhes"],productRows)}</section><section><h2>Cliques no link oficial dentro de Detalhes</h2><p>Produtos com pelo menos um clique no link da janela de detalhes.</p>${table(["Produto","Cliques"],productLinks.map(row => [row.modal_product,formatter.format(safeNumber(row.total))]))}</section><section><h2>Filtros usados</h2>${table(["Categoria","Cliques"],filters.map(row => [row.category_filter || "Todos",formatter.format(safeNumber(row.total))]))}</section><section><h2>Origem dos cliques no cardápio oficial</h2>${table(["Origem","Cliques"],clickSources.map(row => [({menu_intro:"Apresentação do cardápio",closing_banner:"Banner final",product_modal:"Detalhes do produto"})[row.click_source] || row.click_source || "Não informada",formatter.format(safeNumber(row.total))]))}</section><section><h2>Todos os eventos</h2>${table(["Evento","Total"],events.map(row => [eventLabels[row.event_name] || row.event_name,formatter.format(safeNumber(row.total))]))}</section>`;
   return new Response(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Analytics · Chef Dani Teles</title><style>*{box-sizing:border-box}body{margin:0;background:#f6f3ed;color:#292621;font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{max-width:1040px;margin:auto;padding:32px 20px 60px}header{display:flex;justify-content:space-between;align-items:center;gap:12px}h1{font-size:32px;margin:12px 0 4px}h2{font-size:21px;margin:0 0 16px}p{color:#675f55}a{color:#80451e}.tabs{display:flex;gap:8px;margin:26px 0}.tabs a{padding:8px 15px;border-radius:20px;background:white;text-decoration:none}.tabs a[aria-current]{background:#292621;color:white}.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.metric,section{background:white;border:1px solid #e4dfd6;border-radius:14px;padding:20px}.metric strong{display:block;font-size:30px}.metric span{color:#675f55}section{margin-top:18px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid #e9e4dd}th:last-child,td:last-child{text-align:right}.empty{margin:0}.error{background:#fff0ed;color:#9b3d2f;padding:16px;border-radius:10px}</style></head><body><main class="wrap"><header><div><h1>Analytics do cardápio</h1><p>Chef Dani Teles · últimos ${days} ${days===1?'dia':'dias'}</p></div><a href="/analytics/logout">Sair</a></header><nav class="tabs" aria-label="Período">${tabs}</nav>${content}<p>Os números representam interações neste site. Cliques no cardápio oficial não confirmam pedidos ou vendas.</p></main></body></html>`,{headers:{"Content-Type":"text/html; charset=UTF-8","Cache-Control":"no-store","X-Robots-Tag":"noindex"}});
 }
 

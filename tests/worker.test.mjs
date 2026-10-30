@@ -15,8 +15,12 @@ function environment() {
       ANALYTICS: { writeDataPoint: point => points.push(point) },
       ANALYTICS_SQL: { query: async request => {
         queries.push(request);
-        if (request.query.includes('AS event_name')) return { data: [{ event_name: 'product_open', total: 3 }, { event_name: 'official_menu_click', total: 2 }] };
-        if (request.query.includes('AS product')) return { data: [{ product: '<script>alert(1)</script>', total: 2 }] };
+        if (request.query.includes('AS event_name')) return { data: [{ event_name: 'product_open', total: 4 }, { event_name: 'official_menu_click', total: 2 }] };
+        if (request.query.includes('AS product')) return { data: [
+          { product: '<script>alert(1)</script>', open_source: '', total: 2 },
+          { product: 'Torta', open_source: 'product_card', total: 1 },
+          { product: 'Torta', open_source: 'details_button', total: 1 }
+        ] };
         if (request.query.includes('AS category_filter')) return { data: [{ category_filter: 'doces', total: 1 }] };
         if (request.query.includes('AS modal_product')) return { data: [{ modal_product: 'Torta', total: 1 }] };
         return { data: [{ click_source: 'product_modal', total: 1 }] };
@@ -30,11 +34,12 @@ test('records product fields and preserves historical positions', async () => {
   const { env, points } = environment();
   const response = await worker.fetch(new Request(origin + '/api/analytics', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ event: 'product_open', product_id: 42, product_name: 'Torta', category: 'salgados', price: 19.9, availability: 'available' })
+    body: JSON.stringify({ event: 'product_open', product_id: 42, product_name: 'Torta', category: 'salgados', price: 19.9, availability: 'available', source: 'product_card' })
   }), env);
   assert.equal(response.status, 204);
   assert.deepEqual(points[0].blobs.slice(0, 3), ['product_open', 'Torta', 'salgados']);
   assert.equal(points[0].blobs[6], '42');
+  assert.equal(points[0].blobs[7], 'product_card');
   assert.equal(points[0].doubles[3], 19.9);
 
   await worker.fetch(new Request(origin + '/api/analytics', {
@@ -81,10 +86,15 @@ test('dashboard requires a session, queries a bounded period, and escapes produc
   assert.match(html, /últimos 30 dias/);
   assert.match(html, /&lt;script&gt;alert\(1\)&lt;\/script&gt;/);
   assert.doesNotMatch(html, /<script>alert/);
-  assert.match(html, /Cliques em Detalhes por produto/);
+  assert.match(html, /Interações por produto/);
+  assert.match(html, /Produtos abertos/);
+  assert.match(html, /Cliques no produto/);
+  assert.match(html, />1<\/strong><span>Cliques no produto/);
+  assert.match(html, />3<\/strong><span>Cliques em Detalhes/);
   assert.match(html, /Cliques no link oficial dentro de Detalhes/);
   assert.match(html, /Torta/);
   assert.equal(queries.length, 5);
   assert.ok(queries.every(({ query, params }) => query.includes('timestamp >= $start') && params.start));
+  assert.ok(queries.some(({ query }) => query.includes('GROUP BY blob2, blob8')));
   assert.ok(queries.some(({ query }) => query.includes("blob1 = 'official_menu_click' AND blob8 = 'product_modal'")));
 });

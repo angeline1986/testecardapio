@@ -35,7 +35,7 @@ function productImage(product) {
     image.loading = 'lazy';
     return image;
   }
-  const placeholder = document.createElement('div');
+  const placeholder = document.createElement('span');
   placeholder.className = 'image-placeholder';
   placeholder.innerHTML = '<img src="assets/chef-dani/marca.png" alt="" width="74" height="74"><span>Foto indisponível</span>';
   return placeholder;
@@ -64,7 +64,12 @@ function renderProducts() {
       labels.append(status);
     }
     const heading = document.createElement('h3');
-    heading.textContent = product.name;
+    const titleButton = document.createElement('button');
+    titleButton.type = 'button';
+    titleButton.className = 'card-title-button';
+    titleButton.textContent = product.name;
+    titleButton.addEventListener('click', () => openModal(product, titleButton, 'product_card'));
+    heading.append(titleButton);
     const description = document.createElement('p');
     description.textContent = product.summary;
     const footer = document.createElement('div');
@@ -86,11 +91,21 @@ function renderProducts() {
     button.className = 'card-action';
     button.setAttribute('aria-label', 'Ver detalhes de ' + product.name);
     button.innerHTML = 'Detalhes <span aria-hidden="true">↗</span>';
-    button.addEventListener('click', () => openModal(product, button));
+    button.addEventListener('click', () => openModal(product, button, 'details_button'));
+
+    const imageButton = document.createElement('button');
+    imageButton.type = 'button';
+    imageButton.className = 'card-image-button';
+    imageButton.setAttribute('aria-label', 'Ver produto ' + product.name);
+    imageButton.append(productImage(product));
+    imageButton.addEventListener('click', () => openModal(product, imageButton, 'product_card'));
 
     footer.append(priceGroup, button);
     body.append(labels, heading, description, footer);
-    card.append(productImage(product), body);
+    card.append(imageButton, body);
+    card.addEventListener('click', (event) => {
+      if (!event.target.closest('button')) openModal(product, imageButton, 'product_card');
+    });
     grid.append(card);
   });
 }
@@ -112,7 +127,7 @@ function applyFilter(category, shouldTrack = true, source = 'filter_button') {
   if (shouldTrack) track('filter_click', { filter: category, results: count, source });
 }
 
-function openModal(product, button) {
+function openModal(product, button, source) {
   activeProduct = product;
   triggerButton = button;
   openedAt = Date.now();
@@ -135,7 +150,7 @@ function openModal(product, button) {
   modal.setAttribute('aria-hidden', 'false');
   document.body.classList.add('modal-open');
   closeButton.focus();
-  track('product_open', { product_id: product.id, product_name: product.name, category: product.category, price: product.price, availability: product.available ? 'available' : 'sold_out' });
+  track('product_open', { product_id: product.id, product_name: product.name, category: product.category, price: product.price, availability: product.available ? 'available' : 'sold_out', source });
 }
 
 function closeModal(method) {
