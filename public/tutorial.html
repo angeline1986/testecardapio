@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f1e8">
+  <meta name="description" content="Tutorial para editar, visualizar, validar e publicar o cardápio Chef Dani Teles.">
+  <title>Guia do projeto · Chef Dani Teles</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #25251f;
+      --muted: #69695f;
+      --paper: #f5f1e8;
+      --card: #fffdf8;
+      --line: #ded9cc;
+      --green: #315b3d;
+      --green-dark: #23432d;
+      --lime: #d8e77b;
+      --gold: #e6b94f;
+      --code: #20251f;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); line-height: 1.6; }
+    a { color: var(--green); text-underline-offset: .2em; }
+    a:hover { color: var(--green-dark); }
+    .topbar { padding: 18px max(24px, calc((100% - 1120px) / 2)); border-bottom: 1px solid var(--line); display:flex; align-items:center; justify-content:space-between; gap:18px; }
+    .brand { font-weight: 800; letter-spacing: -.03em; color: var(--ink); text-decoration:none; }
+    .brand span { color: var(--green); }
+    .toplink { font-size:.9rem; font-weight:700; }
+    main { width:min(100% - 40px, 1040px); margin:0 auto; }
+    .hero { padding:70px 0 38px; }
+    .eyebrow { color:var(--green); text-transform:uppercase; letter-spacing:.14em; font-size:.76rem; font-weight:800; }
+    h1 { max-width:800px; margin:12px 0 16px; font-family:Georgia, "Times New Roman", serif; font-size:clamp(2.4rem, 6vw, 4.4rem); letter-spacing:-.045em; line-height:1.03; }
+    .intro { max-width:680px; color:var(--muted); font-size:1.1rem; }
+    .hero-actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:26px; }
+    .button { display:inline-flex; align-items:center; justify-content:center; padding:11px 17px; border-radius:999px; background:var(--green); color:white; text-decoration:none; font-weight:750; }
+    .button:hover { background:var(--green-dark); color:white; }
+    .button.secondary { background:var(--lime); color:var(--ink); }
+    .notice { display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:start; padding:18px 20px; margin:12px 0 30px; border:1px solid #d5dba8; border-radius:16px; background:#f1f4d9; }
+    .notice strong { display:block; }
+    .notice p { margin:3px 0 0; color:#555844; }
+    .notice-icon { font-size:1.3rem; }
+    .contents { display:flex; flex-wrap:wrap; gap:8px; padding:0 0 25px; }
+    .contents a { background:rgba(255,253,248,.8); border:1px solid var(--line); border-radius:999px; padding:7px 12px; font-size:.88rem; text-decoration:none; color:var(--ink); }
+    .contents a:hover { border-color:var(--green); }
+    .steps { display:grid; gap:18px; padding-bottom:62px; }
+    .step { display:grid; grid-template-columns:76px minmax(0,1fr); gap:10px; padding:28px; background:var(--card); border:1px solid var(--line); border-radius:20px; box-shadow:0 8px 30px rgba(44,39,25,.035); scroll-margin-top:20px; }
+    .number { display:flex; align-items:center; justify-content:center; width:48px; height:48px; border-radius:15px; background:var(--lime); font-weight:900; font-size:1.2rem; }
+    .step h2 { margin:3px 0 8px; font-family:Georgia, "Times New Roman", serif; font-size:1.65rem; line-height:1.2; }
+    .step p { margin:8px 0; color:#55554d; }
+    .step ul { padding-left:20px; color:#55554d; }
+    .step li { padding:3px 0; }
+    .codebox { position:relative; margin:15px 0; padding:17px 70px 17px 18px; border-radius:12px; overflow:auto; background:var(--code); color:#f2f1e9; }
+    .codebox code { white-space:pre; font: .9rem/1.7 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .copy { position:absolute; top:10px; right:10px; border:1px solid #5b6259; border-radius:8px; background:#343a32; color:#fff; padding:6px 9px; font:inherit; font-size:.78rem; cursor:pointer; }
+    .copy:hover { background:#465044; }
+    .inline-code { background:#eeece4; padding:2px 6px; border-radius:5px; color:#33362c; font: .9em ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .tip { margin-top:14px!important; padding:12px 15px; border-left:3px solid var(--gold); background:#fbf5e5; border-radius:0 9px 9px 0; }
+    .linkrow { display:flex; flex-wrap:wrap; gap:10px 20px; margin-top:14px; font-weight:700; }
+    footer { padding:26px 20px 38px; border-top:1px solid var(--line); text-align:center; color:var(--muted); font-size:.9rem; }
+    footer a { font-weight:700; }
+    @media (max-width:640px) {
+      .topbar { padding:15px 20px; }
+      .toplink { font-size:.8rem; }
+      main { width:min(100% - 28px, 1040px); }
+      .hero { padding-top:48px; }
+      .step { grid-template-columns:46px minmax(0,1fr); gap:8px; padding:19px 15px; }
+      .number { width:38px; height:38px; border-radius:12px; }
+      .step h2 { font-size:1.4rem; }
+      .codebox { padding-left:13px; }
+    }
+    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">Chef Dani <span>Teles</span></a>
+    <a class="toplink" href="/">Voltar ao cardápio ↗</a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="eyebrow">Guia rápido do projeto</div>
+      <h1>Do ajuste à publicação, passo a passo.</h1>
+      <p class="intro">Use este guia para abrir o projeto no computador, editar produtos, conferir a prévia e publicar o cardápio na Cloudflare.</p>
+      <div class="hero-actions">
+        <a class="button" href="#preparar">Começar pelo início ↓</a>
+        <a class="button secondary" href="/analytics">Abrir estatísticas ↗</a>
+      </div>
+    </section>
+
+    <aside class="notice">
+      <div class="notice-icon" aria-hidden="true">✦</div>
+      <div><strong>Não existe um build separado.</strong><p>O Wrangler prepara os arquivos quando você publica. Para revisar localmente, use a prévia; para enviar ao site, use <span class="inline-code">./deploy.command</span>.</p></div>
+    </aside>
+
+    <nav class="contents" aria-label="Nesta página">
+      <a href="#preparar">1. Preparar</a><a href="#rodar">2. Rodar localmente</a><a href="#editar">3. Editar conteúdo</a><a href="#publicar">4. Validar e publicar</a><a href="#acompanhar">5. Acompanhar</a><a href="#git">6. GitHub</a>
+    </nav>
+
+    <section class="steps">
+      <article class="step" id="preparar">
+        <div class="number">1</div><div>
+          <h2>Preparar o computador</h2>
+          <p>Você precisa de Node.js/npm, Python 3, Git e acesso à conta Cloudflare do Worker <strong>cardapio</strong>. Abra o Terminal e entre na pasta do projeto.</p>
+          <div class="codebox"><code>cd ~/Documents/TI/Projetos/testecardapio
+./setup_cardapio.command</code><button class="copy" type="button">Copiar</button></div>
+          <p>Se ainda não clonou o projeto, use estes comandos primeiro:</p>
+          <div class="codebox"><code>git clone https://github.com/angeline1986/testecardapio.git
+cd testecardapio</code><button class="copy" type="button">Copiar</button></div>
+          <p>Na primeira configuração, o assistente pode pedir que você entre na Cloudflare. Se precisar fazer isso manualmente:</p>
+          <div class="codebox"><code>npx wrangler login
+npx wrangler whoami</code><button class="copy" type="button">Copiar</button></div>
+        </div>
+      </article>
+
+      <article class="step" id="rodar">
+        <div class="number">2</div><div>
+          <h2>Rodar uma prévia no computador</h2>
+          <p>Na pasta do projeto, execute o comando abaixo. O navegador abrirá uma cópia local do site. Deixe o Terminal aberto enquanto confere as alterações; use <span class="inline-code">Ctrl+C</span> para encerrar.</p>
+          <div class="codebox"><code>./preview.command</code><button class="copy" type="button">Copiar</button></div>
+          <p class="tip">A prévia local não publica nada. Ela serve para conferir o resultado antes de enviar ao site.</p>
+        </div>
+      </article>
+
+      <article class="step" id="editar">
+        <div class="number">3</div><div>
+          <h2>Editar produtos e imagens</h2>
+          <ul>
+            <li><span class="inline-code">public/products.json</span>: nomes, descrições, categorias, preços e disponibilidade.</li>
+            <li><span class="inline-code">public/assets/chef-dani/</span>: fotos dos produtos. Atualize também o campo <span class="inline-code">image</span> no catálogo.</li>
+            <li><span class="inline-code">public/index.html</span>, <span class="inline-code">public/style.css</span> e <span class="inline-code">public/script.js</span>: estrutura, aparência e interações.</li>
+          </ul>
+          <p>Depois de salvar, rode novamente <span class="inline-code">./preview.command</span> e confira em uma tela de computador e em um celular.</p>
+          <p class="tip">O catálogo é mantido neste projeto. Alterações no InstaDelivery não atualizam automaticamente os preços ou a disponibilidade daqui.</p>
+        </div>
+      </article>
+
+      <article class="step" id="publicar">
+        <div class="number">4</div><div>
+          <h2>Validar e publicar</h2>
+          <p>Quando a prévia estiver certa, publique com o script. Ele verifica os arquivos, confere a autenticação Cloudflare, faz uma validação de deploy e então publica.</p>
+          <div class="codebox"><code>./deploy.command</code><button class="copy" type="button">Copiar</button></div>
+          <p>O site publicado fica em <a href="https://cardapio.chefdaniteles.workers.dev/">cardapio.chefdaniteles.workers.dev</a>. Não é preciso rodar <span class="inline-code">npm install</span> nem <span class="inline-code">npm run build</span> para este projeto.</p>
+          <p class="tip">Se aparecer erro de autenticação, execute <span class="inline-code">npx wrangler login</span> e depois tente o deploy novamente.</p>
+        </div>
+      </article>
+
+      <article class="step" id="acompanhar">
+        <div class="number">5</div><div>
+          <h2>Ver estatísticas e logs</h2>
+          <p>O painel de estatísticas exige a senha administrativa configurada na Cloudflare:</p>
+          <div class="linkrow"><a href="/analytics">Abrir o painel de estatísticas ↗</a></div>
+          <p>Para acompanhar logs do Worker pelo Terminal:</p>
+          <div class="codebox"><code>npx wrangler tail cardapio</code><button class="copy" type="button">Copiar</button></div>
+          <p>Para conferir quais secrets estão configurados, sem revelar os valores:</p>
+          <div class="codebox"><code>npx wrangler secret list --config wrangler.jsonc</code><button class="copy" type="button">Copiar</button></div>
+          <p>Para trocar a senha do painel, rode <span class="inline-code">npx wrangler secret put ADMIN_PASSWORD</span> e informe a nova senha no Terminal. A Cloudflare aplica essa alteração imediatamente. Nunca salve senhas no projeto ou no Git.</p>
+          <div class="linkrow"><a href="https://github.com/angeline1986/testecardapio/blob/main/OBSERVABILITY.md">Detalhes dos eventos e da observabilidade ↗</a></div>
+        </div>
+      </article>
+
+      <article class="step" id="git">
+        <div class="number">6</div><div>
+          <h2>Salvar as alterações no GitHub</h2>
+          <p>Depois de revisar o que mudou, registre e envie as alterações:</p>
+          <div class="codebox"><code>git status
+git add -A
+git commit -m "descreva a alteração"
+git push origin main</code><button class="copy" type="button">Copiar</button></div>
+          <p>Leia a saída de <span class="inline-code">git status</span> antes de adicionar os arquivos. O Worker pode estar conectado ao deploy automático do GitHub; nesse caso, um push para <span class="inline-code">main</span> também pode publicar. O script <span class="inline-code">./deploy.command</span> faz o deploy manual.</p>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer>Guia do projeto Cardápio Chef Dani Teles · <a href="/">Voltar ao cardápio</a></footer>
+  <script>
+    document.querySelectorAll('.copy').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const code = button.parentElement.querySelector('code').textContent;
+        try {
+          await navigator.clipboard.writeText(code);
+          button.textContent = 'Copiado!';
+        } catch {
+          const field = document.createElement('textarea');
+          field.value = code;
+          field.style.position = 'fixed';
+          field.style.opacity = '0';
+          document.body.append(field);
+          field.select();
+          document.execCommand('copy');
+          field.remove();
+          button.textContent = 'Copiado!';
+        }
+        window.setTimeout(() => { button.textContent = 'Copiar'; }, 1800);
+      });
+    });
+  </script>
+</body>
+</html>
